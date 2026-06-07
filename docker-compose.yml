@@ -562,7 +562,7 @@ services:
   # INTRANET — Aplicación Interna (protegida)
   # ===========================================================================
   # Decisión: Nginx estático con página de intranet corporativa.
-  # Futuro: proteger con Keycloak OAuth2 Proxy.
+  # Protegida por Keycloak SSO mediante OAuth2 Proxy.
   # ===========================================================================
   intranet:
     image: nginx:${NGINX_VERSION}
@@ -579,12 +579,6 @@ services:
           cpus: "0.10"
         reservations:
           memory: 16M
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.intranet.rule=Host(`intranet.${DOMAIN_SUFFIX}`)"
-      - "traefik.http.routers.intranet.entrypoints=web"
-      - "traefik.http.services.intranet.loadbalancer.server.port=80"
-      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:80"]
       interval: 30s
@@ -596,6 +590,65 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
+
+  # ===========================================================================
+  # OAUTH2 PROXY — Gatekeeper SSO para Intranet
+  # ===========================================================================
+  # Decisión: Intercepta tráfico a intranet y redirige a Keycloak si no hay auth.
+  # ===========================================================================
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
+    container_name: nike-oauth2-proxy
+    restart: unless-stopped
+    environment:
+      OAUTH2_PROXY_PROVIDER: oidc
+      OAUTH2_PROXY_CLIENT_ID: intranet
+      OAUTH2_PROXY_CLIENT_SECRET: ${INTRANET_CLIENT_SECRET}
+      OAUTH2_PROXY_COOKIE_SECRET: ${INTRANET_COOKIE_SECRET}
+      OAUTH2_PROXY_OIDC_ISSUER_URL: http://auth.${DOMAIN_SUFFIX}/realms/nike
+      OAUTH2_PROXY_LOGIN_URL: http://auth.${DOMAIN_SUFFIX}/realms/nike/protocol/openid-connect/auth
+      OAUTH2_PROXY_REDEEM_URL: http://keycloak:8080/realms/nike/protocol/openid-connect/token
+      OAUTH2_PROXY_OIDC_JWKS_URL: http://keycloak:8080/realms/nike/protocol/openid-connect/certs
+      OAUTH2_PROXY_REDIRECT_URL: http://intranet.${DOMAIN_SUFFIX}/oauth2/callback
+      OAUTH2_PROXY_COOKIE_DOMAINS: .${DOMAIN_SUFFIX}
+      OAUTH2_PROXY_UPSTREAMS: http://intranet:80
+      OAUTH2_PROXY_EMAIL_DOMAINS: "*"
+      OAUTH2_PROXY_INSECURE_OIDC_SKIP_ISSUER_VERIFICATION_HEADER: "true"
+      OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true"
+      TZ: ${TIMEZONE}
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      intranet:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.25"
+        reservations:
+          memory: 32M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.intranet.rule=Host(`intranet.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.intranet.entrypoints=web"
+      - "traefik.http.services.intranet.loadbalancer.server.port=4180"
+      - "traefik.docker.network=nike_frontend"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:4180/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 
   # ===========================================================================
   # PORTAL — Aplicación Pública

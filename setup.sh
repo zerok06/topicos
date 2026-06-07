@@ -104,6 +104,8 @@ GF_PASS=$(openssl rand -base64 16 | tr -d '/+=')
 PT_PASS=$(openssl rand -base64 16 | tr -d '/+=')
 GITEA_KEY=$(openssl rand -hex 16)
 GITEA_TOKEN="eyJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTcxMjAwMDB9.$(openssl rand -hex 12)"
+INTRANET_COOKIE=$(openssl rand -base64 32)
+
 
 # 6. Instalar apache2-utils si no está para generar hashes bcrypt
 if ! command -v htpasswd >/dev/null 2>&1; then
@@ -155,6 +157,10 @@ sed -i "s|PORTAINER_ADMIN_PASSWORD=.*|PORTAINER_ADMIN_PASSWORD=$PT_PASS|g" .env
 # Hashes Bcrypt
 sed -i "s|ADGUARD_PASSWORD_HASH=.*|ADGUARD_PASSWORD_HASH=$ADGUARD_ESCAPED_HASH|g" .env
 sed -i "s|WGEASY_PASSWORD_HASH=.*|WGEASY_PASSWORD_HASH=$WG_ESCAPED_HASH|g" .env
+
+# Intranet OAuth2 Proxy
+sed -i "s|INTRANET_COOKIE_SECRET=.*|INTRANET_COOKIE_SECRET=$INTRANET_COOKIE|g" .env
+
 
 # Actualizar el archivo AdGuardHome.yaml físico si existe
 if [ -f adguard/conf/AdGuardHome.yaml ]; then

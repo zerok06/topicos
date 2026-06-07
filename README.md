@@ -248,9 +248,9 @@ curl -s http://prometheus.nike.com/api/v1/targets | grep -c '"health":"up"'
 
 ## Acceso a Servicios
 
-| Servicio   | URL                   | Credenciales por defecto |
-| ---------- | --------------------- | ------------------------ |
-| Intranet   | http://intranet.nike.com   | Sin auth                 |
+| Servicio   | URL                        | Credenciales por defecto |
+| ---------- | -------------------------- | ------------------------ |
+| Intranet   | http://intranet.nike.com   | Keycloak SSO             |
 | Portal     | http://portal.nike.com     | Sin auth                 |
 | Keycloak   | http://auth.nike.com       | `admin` / (ver .env)     |
 | Gitea      | http://git.nike.com        | Registrarse o SSO        |
@@ -361,10 +361,12 @@ RESUMEN DE CREDENCIALES CONFIGURADAS
 =================================================================
 IP del Servidor: 192.168.2.102
 PostgreSQL User: nikeadmin
-PostgreSQL Pass: tYjtoNt4YuM0dq8EBHt5iQ
-Keycloak Admin Pass: mv3aIsvgidhMDbL3EFjFw
-Grafana Admin Pass: LSZL75pq6cSqbrcZroxCQg
-Portainer Admin Pass: eZIiroEwCtZZOWlhOoubw
+PostgreSQL Pass: IfYfnG55csJoyRnIZLKVqA
+Keycloak Admin Pass: bD2rKS36ZFSwf7x5DeByjQ
+Grafana Admin Pass: M2jTv9qm3liobSCbV4rcA
+Portainer Admin Pass: 8vLx1E5mCKswIEOfUQ2Xg
 AdGuard Home User: admin
-AdGuard Home Pass: ewuOlSJOj84InEpq
-WireGuard VPN Pass: LhqwXGcBOFiskVFy
+AdGuard Home Pass: 5unMiQcDoJwtwxR3
+WireGuard VPN Pass: ZEei6hqHCu6vTj0m
+Gitea User: gitadmin
+Gitea Pass: 3h4DdHIrG4Wd8fyY

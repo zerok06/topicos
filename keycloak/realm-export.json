@@ -215,6 +215,35 @@
         "email",
         "openid"
       ]
+    },
+    {
+      "clientId": "intranet",
+      "name": "Intranet",
+      "description": "Nike Corporate Intranet — OAuth2/OIDC",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "intranet-client-secret-change-me-2026",
+      "redirectUris": [
+        "http://intranet.nike.com/*",
+        "http://intranet.nike.com/oauth2/callback"
+      ],
+      "webOrigins": [
+        "http://intranet.nike.com"
+      ],
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": true,
+      "defaultClientScopes": [
+        "web-origins",
+        "profile",
+        "roles",
+        "email",
+        "openid"
+      ]
     }
   ],
   "requiredActions": [

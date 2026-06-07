@@ -826,9 +826,8 @@ nslookup google.com
 
 1. Abrir navegador → `http://intranet.nike.com`
 2. **Verificar:**
-   - ✅ La página carga con diseño oscuro
-   - ✅ Muestra "Sistema Interno" con badge "Acceso Restringido"
-   - ✅ Muestra aviso de que invitados NO tienen acceso
+   - ✅ Redirige automáticamente a Keycloak SSO (`auth.nike.com`)
+   - ✅ Tras loguearse con `empleado1` / `Empleado1_2026!`, carga la intranet con diseño oscuro y el badge "Acceso Restringido"
    - ✅ Links a todos los servicios internos funcionan
    - ✅ Link al Portal Público funciona
 
@@ -900,7 +899,7 @@ nslookup google.com
 2. **Verificar:**
    - ✅ Dashboard muestra estadísticas de DNS
    - ✅ Queries procesados (debe haber varias ya)
-   - ✅ Filtros → Reescrituras DNS: todos los dominios .lab listados
+   - ✅ Filtros → Reescrituras DNS: todos los dominios .nike.com listados
 
 ---
 
@@ -911,8 +910,8 @@ nslookup google.com
    - ✅ Login exitoso
    - ✅ Home → local: muestra el entorno Docker
    - ✅ Containers: 12 contenedores en estado Running
-   - ✅ Volumes: todos los volúmenes lab\_\* listados
-   - ✅ Networks: 5 redes lab\_\* listadas
+   - ✅ Volumes: todos los volúmenes nike\_* listados
+   - ✅ Networks: 5 redes nike\_* listadas
 
 ---
 
@@ -922,9 +921,9 @@ nslookup google.com
 2. **Verificar:**
    - ✅ Login exitoso
    - ✅ Peers creados visibles
-3. Desde un celular conectado por VPN:
-   - ✅ `portal.nike.com` carga en el navegador
-   - ✅ Ping a `192.168.2.102` funciona
+   - ✅ Desde un celular conectado por VPN:
+     - ✅ `portal.nike.com` carga en el navegador
+     - ✅ Ping a `192.168.2.102` funciona
 
 ---
 
@@ -938,7 +937,7 @@ nslookup google.com
    - ✅ `http://auth.nike.com` sigue cargando (login funciona)
    - ✅ `http://git.nike.com` sigue funcionando
    - ✅ `http://grafana.nike.com` sigue mostrando métricas
-   - ✅ Resolución DNS `.lab` sigue funcionando
+   - ✅ Resolución DNS `.nike.com` sigue funcionando
    - ❌ `google.com` NO resuelve (esperado, sin Internet)
 4. **Reconectar Internet**
 5. ✅ `google.com` vuelve a resolver
@@ -954,7 +953,7 @@ sudo reboot
 
 1. Esperar 2-3 minutos a que el servidor arranque
 2. **Verificar desde la laptop:**
-   - ✅ DNS resuelve `.lab` (puede tardar ~1 minuto)
+   - ✅ DNS resuelve `.nike.com` (puede tardar ~1 minuto)
    - ✅ `http://portal.nike.com` carga
    - ✅ `http://intranet.nike.com` carga
    - ✅ Todos los servicios vuelven a estar online
@@ -987,7 +986,7 @@ ls -lh /opt/nike-backups/
 | Acción                         | Empleado (`empleado1`) | Invitado (sin cuenta)                 |
 | ------------------------------ | ---------------------- | ------------------------------------- |
 | Acceder a `portal.nike.com`         | ✅ SÍ                  | ✅ SÍ                                 |
-| Acceder a `intranet.nike.com`       | ✅ SÍ (ve los links)   | ✅ Ve la página (sin datos sensibles) |
+| Acceder a `intranet.nike.com`       | ✅ SÍ (ve los links)   | ❌ NO (redirige a Keycloak login)     |
 | Login en `auth.nike.com`            | ✅ SÍ                  | ❌ NO (no tiene cuenta)               |
 | Login en `git.nike.com` vía SSO     | ✅ SÍ                  | ❌ NO                                 |
 | Login en `grafana.nike.com` vía SSO | ✅ SÍ                  | ❌ NO                                 |
@@ -1013,10 +1012,11 @@ ls -lh /opt/nike-backups/
 
 ## ✅ Checklist Final
 
-- [ ] DNS resuelve todos los dominios `.lab`
+- [ ] DNS resuelve todos los dominios `.nike.com`
 - [ ] Portal Público accesible sin autenticación
-- [ ] Sistema Interno muestra restricción de acceso
-- [ ] Keycloak funciona con realm "lab"
+- [ ] Sistema Interno protegido por SSO (redirige a login)
+- [ ] Keycloak funciona con realm "nike"
+
 - [ ] Usuarios creados con roles y grupos
 - [ ] Gitea login vía SSO funciona
 - [ ] Grafana muestra dashboards con datos
