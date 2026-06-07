@@ -511,14 +511,13 @@ services:
     container_name: nike-wireguard
     restart: unless-stopped
     environment:
-      LANGUAGE: es
-      WG_HOST: ${WG_HOST}
-      PORT: "51821"
-      WG_PORT: ${WG_PORT}
-      WG_DEFAULT_DNS: ${WG_DEFAULT_DNS}
-      WG_DEFAULT_ADDRESS: ${WG_DEFAULT_ADDRESS}
-      WG_ALLOWED_IPS: ${WG_ALLOWED_IPS}
-      PASSWORD_HASH: ${WGEASY_PASSWORD_HASH}
+      INSECURE: "true"
+      INIT_ENABLED: "true"
+      INIT_PASSWORD: ${WG_PASSWORD}
+      INIT_HOST: ${WG_HOST}
+      INIT_PORT: ${WG_PORT}
+      INIT_DNS: ${WG_DEFAULT_DNS}
+      INIT_IPV4_CIDR: 10.8.0.0/24
     volumes:
       - wireguard_data:/etc/wireguard
     ports:

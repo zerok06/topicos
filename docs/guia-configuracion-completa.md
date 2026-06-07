@@ -401,7 +401,7 @@ http://auth.nike.com
 1. Ir a **Users → Create new user**
 2. Datos:
    - **Username:** `empleado1`
-   - **Email:** `empleado1@lab.nike.com`
+   - **Email:** `empleado1@nike.com`
    - **Email verified:** ✅
    - **First name:** `Juan`
    - **Last name:** `Pérez`
@@ -472,7 +472,7 @@ Si el formulario de instalación lo pide:
 
 - **Username:** `gitadmin`
 - **Password:** Una contraseña segura
-- **Email:** `gitadmin@lab.nike.com`
+- **Email:** `gitadmin@nike.com`
 
 ### 5.3 Configurar OAuth2 con Keycloak
 
@@ -482,20 +482,20 @@ Si el formulario de instalación lo pide:
 4. Click **Add Authentication Source**
 5. Configurar:
 
-| Campo                                 | Valor                                                         |
-| ------------------------------------- | ------------------------------------------------------------- |
-| **Authentication Type**               | OAuth2                                                        |
-| **Authentication Name**               | keycloak                                                      |
-| **OAuth2 Provider**                   | OpenID Connect                                                |
-| **Client ID**                         | `gitea`                                                       |
-| **Client Secret**                     | `gitea-client-secret-change-me-2026` (o el que copiaste)      |
-| **OpenID Connect Auto Discovery URL** | `http://auth.nike.com/realms/lab/.well-known/openid-configuration` |
-| **Additional Scopes**                 | `openid profile email`                                        |
-| **Required Claim Name**               | (dejar vacío)                                                 |
-| **Required Claim Value**              | (dejar vacío)                                                 |
-| **Group Claim Name**                  | `groups`                                                      |
-| **Admin Group**                       | `operations`                                                  |
-| **Restrict to Group Members**         | (dejar vacío, o marcar si quieres restringir)                 |
+| Campo                                 | Valor                                                               |
+| ------------------------------------- | ------------------------------------------------------------------- |
+| **Authentication Type**               | OAuth2                                                              |
+| **Authentication Name**               | keycloak                                                            |
+| **OAuth2 Provider**                   | OpenID Connect                                                      |
+| **Client ID**                         | `gitea`                                                             |
+| **Client Secret**                     | `gitea-client-secret-change-me-2026` (o el que copiaste)            |
+| **OpenID Connect Auto Discovery URL** | `http://auth.nike.com/realms/nike/.well-known/openid-configuration` |
+| **Additional Scopes**                 | `openid profile email`                                              |
+| **Required Claim Name**               | (dejar vacío)                                                       |
+| **Required Claim Value**              | (dejar vacío)                                                       |
+| **Group Claim Name**                  | `groups`                                                            |
+| **Admin Group**                       | `operations`                                                        |
+| **Restrict to Group Members**         | (dejar vacío, o marcar si quieres restringir)                       |
 
 6. Click **Add Authentication Source**
 
@@ -554,12 +554,12 @@ GF_AUTH_GENERIC_OAUTH_NAME: "Keycloak SSO"
 GF_AUTH_GENERIC_OAUTH_CLIENT_ID: "grafana"
 GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET: "grafana-client-secret-change-me-2026"
 GF_AUTH_GENERIC_OAUTH_SCOPES: "openid profile email roles"
-GF_AUTH_GENERIC_OAUTH_AUTH_URL: "http://auth.nike.com/realms/lab/protocol/openid-connect/auth"
-GF_AUTH_GENERIC_OAUTH_TOKEN_URL: "http://keycloak:8080/realms/lab/protocol/openid-connect/token"
-GF_AUTH_GENERIC_OAUTH_API_URL: "http://keycloak:8080/realms/lab/protocol/openid-connect/userinfo"
+GF_AUTH_GENERIC_OAUTH_AUTH_URL: "http://auth.nike.com/realms/nike/protocol/openid-connect/auth"
+GF_AUTH_GENERIC_OAUTH_TOKEN_URL: "http://keycloak:8080/realms/nike/protocol/openid-connect/token"
+GF_AUTH_GENERIC_OAUTH_API_URL: "http://keycloak:8080/realms/nike/protocol/openid-connect/userinfo"
 GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH: "contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'developer') && 'Editor' || 'Viewer'"
 GF_AUTH_GENERIC_OAUTH_ALLOW_ASSIGN_GRAFANA_ADMIN: "true"
-GF_AUTH_SIGNOUT_REDIRECT_URL: "http://auth.nike.com/realms/lab/protocol/openid-connect/logout?post_logout_redirect_uri=http%3A%2F%2Fgrafana.nike.com%2Flogin&client_id=grafana"
+GF_AUTH_SIGNOUT_REDIRECT_URL: "http://auth.nike.com/realms/nike/protocol/openid-connect/logout?post_logout_redirect_uri=http%3A%2F%2Fgrafana.nike.com%2Flogin&client_id=grafana"
 ```
 
 > ⚠️ **IMPORTANTE — URLs internas vs externas:**
@@ -910,8 +910,8 @@ nslookup google.com
    - ✅ Login exitoso
    - ✅ Home → local: muestra el entorno Docker
    - ✅ Containers: 12 contenedores en estado Running
-   - ✅ Volumes: todos los volúmenes nike\_* listados
-   - ✅ Networks: 5 redes nike\_* listadas
+   - ✅ Volumes: todos los volúmenes nike\_\* listados
+   - ✅ Networks: 5 redes nike\_\* listadas
 
 ---
 
@@ -983,22 +983,22 @@ ls -lh /opt/nike-backups/
 
 ### 11.14 Prueba de Acceso por Roles
 
-| Acción                         | Empleado (`empleado1`) | Invitado (sin cuenta)                 |
-| ------------------------------ | ---------------------- | ------------------------------------- |
-| Acceder a `portal.nike.com`         | ✅ SÍ                  | ✅ SÍ                                 |
-| Acceder a `intranet.nike.com`       | ✅ SÍ (ve los links)   | ❌ NO (redirige a Keycloak login)     |
-| Login en `auth.nike.com`            | ✅ SÍ                  | ❌ NO (no tiene cuenta)               |
-| Login en `git.nike.com` vía SSO     | ✅ SÍ                  | ❌ NO                                 |
-| Login en `grafana.nike.com` vía SSO | ✅ SÍ                  | ❌ NO                                 |
-| Login en `portainer.nike.com`       | ✅ SÍ (admin)          | ❌ NO                                 |
-| Crear peer VPN                 | ✅ SÍ (admin)          | ❌ NO                                 |
+| Acción                              | Empleado (`empleado1`) | Invitado (sin cuenta)             |
+| ----------------------------------- | ---------------------- | --------------------------------- |
+| Acceder a `portal.nike.com`         | ✅ SÍ                  | ✅ SÍ                             |
+| Acceder a `intranet.nike.com`       | ✅ SÍ (ve los links)   | ❌ NO (redirige a Keycloak login) |
+| Login en `auth.nike.com`            | ✅ SÍ                  | ❌ NO (no tiene cuenta)           |
+| Login en `git.nike.com` vía SSO     | ✅ SÍ                  | ❌ NO                             |
+| Login en `grafana.nike.com` vía SSO | ✅ SÍ                  | ❌ NO                             |
+| Login en `portainer.nike.com`       | ✅ SÍ (admin)          | ❌ NO                             |
+| Crear peer VPN                      | ✅ SÍ (admin)          | ❌ NO                             |
 
 ---
 
 ## Resumen de Credenciales
 
-| Servicio       | URL                  | Usuario     | Contraseña                                  |
-| -------------- | -------------------- | ----------- | ------------------------------------------- |
+| Servicio       | URL                       | Usuario     | Contraseña                                  |
+| -------------- | ------------------------- | ----------- | ------------------------------------------- |
 | Keycloak Admin | http://auth.nike.com      | `admin`     | (ver `.env` → `KC_ADMIN_PASSWORD`)          |
 | Keycloak User  | http://auth.nike.com      | `empleado1` | `Empleado1_2026!`                           |
 | Grafana        | http://grafana.nike.com   | `admin`     | (ver `.env` → `GF_SECURITY_ADMIN_PASSWORD`) |
@@ -1006,7 +1006,7 @@ ls -lh /opt/nike-backups/
 | Portainer      | http://portainer.nike.com | `admin`     | (creado en Fase 7)                          |
 | AdGuard Home   | http://adguard.nike.com   | `admin`     | (hash en AdGuardHome.yaml)                  |
 | WireGuard      | http://vpn.nike.com       | —           | (hash en `.env`)                            |
-| PostgreSQL     | — (solo interno)     | `nikeadmin`  | (ver `.env` → `POSTGRES_PASSWORD`)          |
+| PostgreSQL     | — (solo interno)          | `nikeadmin` | (ver `.env` → `POSTGRES_PASSWORD`)          |
 
 ---
 

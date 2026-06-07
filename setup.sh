@@ -119,9 +119,7 @@ info_msg "Generando hashes Bcrypt seguros..."
 ADGUARD_RAW_HASH=$(htpasswd -nbB admin "$ADGUARD_PASS" | cut -d: -f2)
 ADGUARD_ESCAPED_HASH=$(echo "$ADGUARD_RAW_HASH" | sed 's/\$/\$\$/g')
 
-# WireGuard Hash (utiliza el mismo método bcrypt compatible de htpasswd)
-WG_RAW_HASH=$(htpasswd -nbB admin "$WG_PASS" | cut -d: -f2)
-WG_ESCAPED_HASH=$(echo "$WG_RAW_HASH" | sed 's/\$/\$\$/g')
+
 
 # 8. Reemplazar valores en el archivo .env
 info_msg "Escribiendo valores y hashes en '.env'..."
@@ -156,7 +154,7 @@ sed -i "s|PORTAINER_ADMIN_PASSWORD=.*|PORTAINER_ADMIN_PASSWORD=$PT_PASS|g" .env
 
 # Hashes Bcrypt
 sed -i "s|ADGUARD_PASSWORD_HASH=.*|ADGUARD_PASSWORD_HASH=$ADGUARD_ESCAPED_HASH|g" .env
-sed -i "s|WGEASY_PASSWORD_HASH=.*|WGEASY_PASSWORD_HASH=$WG_ESCAPED_HASH|g" .env
+sed -i "s|WG_PASSWORD=.*|WG_PASSWORD=$WG_PASS|g" .env
 
 # Intranet OAuth2 Proxy
 sed -i "s|INTRANET_COOKIE_SECRET=.*|INTRANET_COOKIE_SECRET=$INTRANET_COOKIE|g" .env
