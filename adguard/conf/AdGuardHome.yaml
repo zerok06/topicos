@@ -91,30 +91,30 @@ filtering:
   safebrowsing_enabled: false
   rewrites:
     # =========================================================================
-    # DNS REWRITES — Dominios .lab → IP del servidor
+    # DNS REWRITES — Dominios .nike.com → IP del servidor
     # =========================================================================
-    - domain: auth.lab
+    - domain: auth.nike.com
       answer: 192.168.1.100
-    - domain: git.lab
+    - domain: git.nike.com
       answer: 192.168.1.100
-    - domain: grafana.lab
+    - domain: grafana.nike.com
       answer: 192.168.1.100
-    - domain: prometheus.lab
+    - domain: prometheus.nike.com
       answer: 192.168.1.100
-    - domain: portainer.lab
+    - domain: portainer.nike.com
       answer: 192.168.1.100
-    - domain: intranet.lab
+    - domain: intranet.nike.com
       answer: 192.168.1.100
-    - domain: portal.lab
+    - domain: portal.nike.com
       answer: 192.168.1.100
-    - domain: adguard.lab
+    - domain: adguard.nike.com
       answer: 192.168.1.100
-    - domain: traefik.lab
+    - domain: traefik.nike.com
       answer: 192.168.1.100
-    - domain: vpn.lab
+    - domain: vpn.nike.com
       answer: 192.168.1.100
     # Wildcard para futuros subdominios
-    - domain: "*.lab"
+    - domain: "*.nike.com"
       answer: 192.168.1.100
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576

@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# ENTERPRISE LAB PLATFORM — Script de Restore
+# NIKE ENTERPRISE PLATFORM — Script de Restore
 # =============================================================================
 # Uso: sudo ./restore.sh <ruta_al_backup.tar.gz>
 #
@@ -30,14 +30,14 @@ log_error() { echo -e "${RED}[ERROR]${NC} $(date '+%H:%M:%S') $*"; }
 if [ $# -lt 1 ]; then
     echo "Uso: $0 <ruta_al_backup.tar.gz>"
     echo ""
-    echo "Ejemplo: $0 /opt/lab-backups/lab-backup-20260606_120000.tar.gz"
+    echo "Ejemplo: $0 /opt/nike-backups/nike-backup-20260606_120000.tar.gz"
     exit 1
 fi
 
 BACKUP_FILE="$1"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-TEMP_DIR="/tmp/lab-restore-$$"
+TEMP_DIR="/tmp/nike-restore-$$"
 
 # --- Verificaciones ---
 if [ ! -f "$BACKUP_FILE" ]; then
@@ -102,12 +102,12 @@ if [ -f "${RESTORE_PATH}/postgres_all_databases.sql" ]; then
     docker compose up -d postgres
     sleep 10
 
-    POSTGRES_CONTAINER=$(docker ps --filter "name=lab-postgres" --format "{{.Names}}" | head -1)
+    POSTGRES_CONTAINER=$(docker ps --filter "name=nike-postgres" --format "{{.Names}}" | head -1)
     if [ -n "$POSTGRES_CONTAINER" ]; then
         # Restaurar dump completo
         cat "${RESTORE_PATH}/postgres_all_databases.sql" | \
             docker exec -i "$POSTGRES_CONTAINER" psql \
-                -U "${POSTGRES_USER:-labadmin}" \
+                -U "${POSTGRES_USER:-nikeadmin}" \
                 -d postgres \
                 2>/dev/null
         log_ok "PostgreSQL restaurado desde dump completo"
@@ -177,8 +177,8 @@ log_ok "Archivos temporales limpiados"
 
 echo ""
 log_warn "Acciones recomendadas post-restore:"
-echo "  1. Verificar acceso a http://intranet.lab"
-echo "  2. Verificar login en http://auth.lab"
-echo "  3. Verificar repositorios en http://git.lab"
-echo "  4. Verificar dashboards en http://grafana.lab"
-echo "  5. Verificar DNS: dig @192.168.1.100 auth.lab"
+echo "  1. Verificar acceso a http://intranet.nike.com"
+echo "  2. Verificar login en http://auth.nike.com"
+echo "  3. Verificar repositorios en http://git.nike.com"
+echo "  4. Verificar dashboards en http://grafana.nike.com"
+echo "  5. Verificar DNS: dig auth.nike.com"

@@ -41,16 +41,16 @@ free -h
 docker compose logs --tail=50 postgres
 
 # 2. Verificar permisos del volumen
-docker volume inspect lab_postgres_data
+docker volume inspect nike_postgres_data
 
 # 3. Si el volumen está corrupto, restaurar desde backup
 docker compose stop
-docker volume rm lab_postgres_data
+docker volume rm nike_postgres_data
 docker compose up -d postgres
 sleep 15
 
 # 4. Restaurar datos
-docker exec -i lab-postgres psql -U labadmin -d postgres < /opt/lab-backups/último-backup/postgres_all_databases.sql
+docker exec -i nike-postgres psql -U nikeadmin -d postgres < /opt/nike-backups/último-backup/postgres_all_databases.sql
 
 # 5. Levantar el resto
 docker compose up -d
@@ -70,10 +70,10 @@ docker compose up -d
 docker compose ps postgres
 
 # 3. Verificar que la BD existe
-docker exec lab-postgres psql -U labadmin -l | grep keycloak
+docker exec nike-postgres psql -U nikeadmin -l | grep keycloak
 
 # 4. Si no existe, crearla
-docker exec lab-postgres psql -U labadmin -c "CREATE DATABASE keycloak;"
+docker exec nike-postgres psql -U nikeadmin -c "CREATE DATABASE keycloak;"
 
 # 5. Reiniciar Keycloak
 docker compose restart keycloak
@@ -88,7 +88,7 @@ docker compose restart keycloak
 docker compose ps adguard
 
 # 2. Probar resolución directa
-dig @192.168.1.100 auth.lab
+dig @192.168.1.100 auth.nike.com
 
 # 3. Si no responde, reiniciar
 docker compose restart adguard
@@ -119,10 +119,10 @@ docker compose ps traefik
 curl http://192.168.1.100:80/api/http/routers | python3 -m json.tool
 
 # 3. Verificar que los servicios tienen labels correctos
-docker inspect lab-gitea | grep -A 5 "traefik"
+docker inspect nike-gitea | grep -A 5 "traefik"
 
 # 4. Verificar redes
-docker network inspect lab_frontend
+docker network inspect nike_frontend
 
 # 5. Reiniciar Traefik
 docker compose restart traefik
@@ -149,7 +149,7 @@ docker builder prune
 sudo truncate -s 0 /var/lib/docker/containers/*/*-json.log
 
 # 6. Verificar backups antiguos
-ls -lh /opt/lab-backups/
+ls -lh /opt/nike-backups/
 # Eliminar manualmente si es necesario
 ```
 
@@ -189,15 +189,15 @@ sudo systemctl status docker
 
 # 4. Copiar archivos del proyecto
 # (desde backup USB, otro servidor, o repositorio Git)
-sudo mkdir -p /opt/lab-platform
+sudo mkdir -p /opt/nike-platform
 # Copiar archivos...
 
 # 5. Copiar archivo de backup más reciente
-sudo mkdir -p /opt/lab-backups
+sudo mkdir -p /opt/nike-backups
 # Copiar backup...
 
 # 6. Configurar .env
-cd /opt/lab-platform
+cd /opt/nike-platform
 cp .env.example .env
 nano .env  # Configurar con los valores correctos
 
@@ -205,12 +205,12 @@ nano .env  # Configurar con los valores correctos
 docker compose pull
 
 # 8. Ejecutar restore
-sudo ./backups/scripts/restore.sh /opt/lab-backups/lab-backup-XXXX.tar.gz
+sudo ./backups/scripts/restore.sh /opt/nike-backups/nike-backup-XXXX.tar.gz
 
 # 9. Verificar
 docker compose ps
-dig @192.168.1.100 auth.lab
-curl http://intranet.lab
+dig @192.168.1.100 auth.nike.com
+curl http://intranet.nike.com
 ```
 
 **Tiempo estimado de recuperación:** 30-60 minutos (dependiendo del tamaño del backup y velocidad de descarga de imágenes Docker).
@@ -240,7 +240,7 @@ sudo ufw allow 2222/tcp  # Git SSH
 
 # 4. Verificar redes Docker
 docker network ls
-docker network inspect lab_frontend
+docker network inspect nike_frontend
 ```
 
 ---

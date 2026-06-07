@@ -1,8 +1,8 @@
 {
-  "id": "lab",
-  "realm": "lab",
-  "displayName": "Enterprise Lab",
-  "displayNameHtml": "<b>Enterprise Lab</b>",
+  "id": "nike",
+  "realm": "nike",
+  "displayName": "Nike Enterprise",
+  "displayNameHtml": "<b>Nike Enterprise</b>",
   "enabled": true,
   "sslRequired": "none",
   "registrationAllowed": false,
@@ -66,18 +66,18 @@
   ],
   "users": [
     {
-      "username": "labadmin",
+      "username": "nikeadmin",
       "enabled": true,
       "emailVerified": true,
-      "firstName": "Lab",
+      "firstName": "Nike",
       "lastName": "Admin",
-      "email": "admin@lab.local",
+      "email": "admin@nike.com",
       "realmRoles": ["admin"],
       "groups": ["/operations"],
       "credentials": [
         {
           "type": "password",
-          "value": "LabAdmin2026!",
+          "value": "NikeAdmin2026!",
           "temporary": true
         }
       ]
@@ -92,11 +92,11 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "gitea-client-secret-change-me-2026",
       "redirectUris": [
-        "http://git.lab/*",
-        "http://git.lab/user/oauth2/keycloak/callback"
+        "http://git.nike.com/*",
+        "http://git.nike.com/user/oauth2/keycloak/callback"
       ],
       "webOrigins": [
-        "http://git.lab"
+        "http://git.nike.com"
       ],
       "protocol": "openid-connect",
       "publicClient": false,
@@ -144,11 +144,11 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "grafana-client-secret-change-me-2026",
       "redirectUris": [
-        "http://grafana.lab/*",
-        "http://grafana.lab/login/generic_oauth"
+        "http://grafana.nike.com/*",
+        "http://grafana.nike.com/login/generic_oauth"
       ],
       "webOrigins": [
-        "http://grafana.lab"
+        "http://grafana.nike.com"
       ],
       "protocol": "openid-connect",
       "publicClient": false,
@@ -196,10 +196,10 @@
       "clientAuthenticatorType": "client-secret",
       "secret": "portainer-client-secret-change-me-2026",
       "redirectUris": [
-        "http://portainer.lab/*"
+        "http://portainer.nike.com/*"
       ],
       "webOrigins": [
-        "http://portainer.lab"
+        "http://portainer.nike.com"
       ],
       "protocol": "openid-connect",
       "publicClient": false,

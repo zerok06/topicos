@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# ENTERPRISE LAB PLATFORM — Script de Backup
+# NIKE ENTERPRISE PLATFORM — Script de Backup
 # =============================================================================
 # Uso: sudo ./backup.sh [directorio_destino]
 #
@@ -19,12 +19,12 @@ set -euo pipefail
 # --- Configuración ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
-BACKUP_DIR="${1:-/opt/lab-backups}"
+BACKUP_DIR="${1:-/opt/nike-backups}"
 RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-7}"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-BACKUP_NAME="lab-backup-${TIMESTAMP}"
+BACKUP_NAME="nike-backup-${TIMESTAMP}"
 BACKUP_PATH="${BACKUP_DIR}/${BACKUP_NAME}"
-COMPOSE_PROJECT="lab"
+COMPOSE_PROJECT="nike"
 
 # Colores para output
 RED='\033[0;31m'
@@ -55,11 +55,11 @@ log_info "Directorio de backup: ${BACKUP_PATH}"
 
 # --- 1. Dump de PostgreSQL ---
 log_info "Realizando dump de PostgreSQL..."
-POSTGRES_CONTAINER=$(docker ps --filter "name=lab-postgres" --format "{{.Names}}" | head -1)
+POSTGRES_CONTAINER=$(docker ps --filter "name=nike-postgres" --format "{{.Names}}" | head -1)
 
 if [ -n "$POSTGRES_CONTAINER" ]; then
     docker exec "$POSTGRES_CONTAINER" pg_dumpall \
-        -U "${POSTGRES_USER:-labadmin}" \
+        -U "${POSTGRES_USER:-nikeadmin}" \
         --clean \
         --if-exists \
         > "${BACKUP_PATH}/postgres_all_databases.sql" 2>/dev/null
@@ -73,7 +73,7 @@ if [ -n "$POSTGRES_CONTAINER" ]; then
     # Dumps individuales por base de datos
     for DB in keycloak gitea grafana; do
         docker exec "$POSTGRES_CONTAINER" pg_dump \
-            -U "${POSTGRES_USER:-labadmin}" \
+            -U "${POSTGRES_USER:-nikeadmin}" \
             --clean --if-exists \
             -d "$DB" \
             > "${BACKUP_PATH}/postgres_${DB}.sql" 2>/dev/null
@@ -87,12 +87,12 @@ fi
 log_info "Copiando volúmenes Docker..."
 
 VOLUMES=(
-    "lab_gitea_data"
-    "lab_grafana_data"
-    "lab_portainer_data"
-    "lab_adguard_work"
-    "lab_wireguard_data"
-    "lab_traefik_certs"
+    "nike_gitea_data"
+    "nike_grafana_data"
+    "nike_portainer_data"
+    "nike_adguard_work"
+    "nike_wireguard_data"
+    "nike_traefik_certs"
 )
 
 for VOLUME in "${VOLUMES[@]}"; do
@@ -132,8 +132,8 @@ log_ok "Checksum SHA256 generado"
 
 # --- 6. Rotación de backups antiguos ---
 log_info "Rotando backups antiguos (retención: ${RETENTION_DAYS} días)..."
-DELETED=$(find "${BACKUP_DIR}" -name "lab-backup-*.tar.gz" -mtime "+${RETENTION_DAYS}" -delete -print | wc -l)
-find "${BACKUP_DIR}" -name "lab-backup-*.tar.gz.sha256" -mtime "+${RETENTION_DAYS}" -delete 2>/dev/null
+DELETED=$(find "${BACKUP_DIR}" -name "nike-backup-*.tar.gz" -mtime "+${RETENTION_DAYS}" -delete -print | wc -l)
+find "${BACKUP_DIR}" -name "nike-backup-*.tar.gz.sha256" -mtime "+${RETENTION_DAYS}" -delete 2>/dev/null
 if [ "$DELETED" -gt 0 ]; then
     log_ok "Eliminados ${DELETED} backups antiguos"
 else

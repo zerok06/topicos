@@ -1,4 +1,4 @@
-# Enterprise Lab Platform
+# Nike Enterprise Platform
 
 > Plataforma self-hosted completa para laboratorio empresarial sobre Ubuntu Server 24.04 LTS.  
 > 100% open source. 100% offline-capable. Docker Compose.
@@ -32,12 +32,14 @@
 ## Requisitos Previos
 
 ### Hardware Mínimo
+
 - CPU: 4 cores (Intel i5 o equivalente)
 - RAM: 16 GB
 - Disco: 50 GB libres (SSD recomendado)
 - Red: 1 interfaz ethernet
 
 ### Software Necesario
+
 - Ubuntu Server 24.04 LTS (instalación mínima)
 - Docker Engine 27.x+
 - Docker Compose v2.x+ (incluido con Docker Engine)
@@ -90,7 +92,7 @@ network:
   version: 2
   renderer: networkd
   ethernets:
-    enp0s3:    # Cambiar al nombre de tu interfaz (ip a)
+    enp0s3: # Cambiar al nombre de tu interfaz (ip a)
       dhcp4: false
       addresses:
         - 192.168.1.100/24
@@ -99,8 +101,8 @@ network:
           via: 192.168.1.1
       nameservers:
         addresses:
-          - 127.0.0.1      # Apuntar a AdGuard local
-          - 1.1.1.1         # Fallback
+          - 127.0.0.1 # Apuntar a AdGuard local
+          - 1.1.1.1 # Fallback
 ```
 
 ```bash
@@ -112,13 +114,13 @@ sudo netplan apply
 ```bash
 # Opción A: Si tienes el repositorio
 cd /opt
-sudo git clone <URL_DEL_REPO> lab-platform
-cd lab-platform
+sudo git clone <URL_DEL_REPO> nike-platform
+cd nike-platform
 
 # Opción B: Copiar directamente los archivos
-sudo mkdir -p /opt/lab-platform
-sudo cp -r . /opt/lab-platform/
-cd /opt/lab-platform
+sudo mkdir -p /opt/nike-platform
+sudo cp -r . /opt/nike-platform/
+cd /opt/nike-platform
 ```
 
 ### Paso 4: Configurar el Entorno (Recomendado)
@@ -134,6 +136,7 @@ sudo ./setup.sh
 ```
 
 **Este script se encarga de:**
+
 1. Autodetectar la dirección IP local primaria de tu servidor.
 2. Copiar `.env.example` a `.env` de forma segura.
 3. Ofrecerte autogenerar contraseñas aleatorias seguras o escribir las tuyas.
@@ -153,7 +156,7 @@ Si prefieres realizar el aprovisionamiento de variables a mano:
    nano .env
    ```
 
-   *Modifica variables críticas: `SERVER_IP`, `POSTGRES_PASSWORD`, `KC_ADMIN_PASSWORD`, `GF_SECURITY_ADMIN_PASSWORD`, `WG_HOST`.*
+   _Modifica variables críticas: `SERVER_IP`, `POSTGRES_PASSWORD`, `KC_ADMIN_PASSWORD`, `GF_SECURITY_ADMIN_PASSWORD`, `WG_HOST`._
 
 2. **Generar hash para WireGuard:**
 
@@ -161,7 +164,7 @@ Si prefieres realizar el aprovisionamiento de variables a mano:
    docker run --rm ghcr.io/wg-easy/wg-easy wgpw 'TU_PASSWORD'
    ```
 
-   *Duplicar cada '$' por '$$' al pegarlo en `WGEASY_PASSWORD_HASH` en el `.env`.*
+   _Duplicar cada '$' por '$$' al pegarlo en `WGEASY_PASSWORD_HASH` en el `.env`._
 
 3. **Generar hash de contraseña para AdGuard:**
 
@@ -170,7 +173,7 @@ Si prefieres realizar el aprovisionamiento de variables a mano:
    htpasswd -nbB admin 'TU_PASSWORD' | cut -d: -f2
    ```
 
-   *Pegar en `ADGUARD_PASSWORD_HASH` en el `.env`.*
+   _Pegar en `ADGUARD_PASSWORD_HASH` en el `.env`._
 
 4. **Hacer scripts ejecutables:**
 
@@ -196,11 +199,13 @@ docker compose logs -f
 ### Paso 8: Configurar DNS en los Clientes
 
 **Opción A — Router (recomendado para toda la red):**
+
 - Configurar el DNS primario del router DHCP a `192.168.1.100`
 
 **Opción B — Por dispositivo:**
 
-*Linux/Mac:*
+_Linux/Mac:_
+
 ```bash
 # Temporal
 sudo resolvectl dns enp0s3 192.168.1.100
@@ -208,11 +213,13 @@ sudo resolvectl dns enp0s3 192.168.1.100
 # Permanente: editar /etc/netplan/ o /etc/resolv.conf
 ```
 
-*Windows:*
+_Windows:_
+
 1. Panel de control → Redes → Propiedades del adaptador
 2. IPv4 → DNS preferido: `192.168.1.100`
 
-*Android/iOS:*
+_Android/iOS:_
+
 1. Configuración WiFi → Red actual → Avanzado
 2. DNS: `192.168.1.100`
 
@@ -220,38 +227,38 @@ sudo resolvectl dns enp0s3 192.168.1.100
 
 ```bash
 # Verificar DNS
-dig @192.168.1.100 auth.lab
-dig @192.168.1.100 git.lab
+dig @192.168.1.100 auth.nike.com
+dig @192.168.1.100 git.nike.com
 
 # Verificar servicios HTTP
-curl -s -o /dev/null -w "%{http_code}" -H "Host: auth.lab" http://192.168.1.100
-curl -s -o /dev/null -w "%{http_code}" -H "Host: git.lab" http://192.168.1.100
-curl -s -o /dev/null -w "%{http_code}" -H "Host: grafana.lab" http://192.168.1.100
-curl -s -o /dev/null -w "%{http_code}" -H "Host: intranet.lab" http://192.168.1.100
-curl -s -o /dev/null -w "%{http_code}" -H "Host: portal.lab" http://192.168.1.100
+curl -s -o /dev/null -w "%{http_code}" -H "Host: auth.nike.com" http://192.168.1.100
+curl -s -o /dev/null -w "%{http_code}" -H "Host: git.nike.com" http://192.168.1.100
+curl -s -o /dev/null -w "%{http_code}" -H "Host: grafana.nike.com" http://192.168.1.100
+curl -s -o /dev/null -w "%{http_code}" -H "Host: intranet.nike.com" http://192.168.1.100
+curl -s -o /dev/null -w "%{http_code}" -H "Host: portal.nike.com" http://192.168.1.100
 
 # Verificar healthchecks
 docker compose ps --format "table {{.Name}}\t{{.Status}}"
 
 # Verificar targets de Prometheus
-curl -s http://prometheus.lab/api/v1/targets | grep -c '"health":"up"'
+curl -s http://prometheus.nike.com/api/v1/targets | grep -c '"health":"up"'
 ```
 
 ---
 
 ## Acceso a Servicios
 
-| Servicio | URL | Credenciales por defecto |
-|---|---|---|
-| Intranet | http://intranet.lab | Sin auth |
-| Portal | http://portal.lab | Sin auth |
-| Keycloak | http://auth.lab | `admin` / (ver .env) |
-| Gitea | http://git.lab | Registrarse o SSO |
-| Grafana | http://grafana.lab | `admin` / (ver .env) |
-| Prometheus | http://prometheus.lab | Sin auth |
-| Portainer | http://portainer.lab | Setup inicial |
-| AdGuard | http://adguard.lab | `admin` / (ver .env) |
-| WireGuard | http://vpn.lab | Password hash (ver .env) |
+| Servicio   | URL                   | Credenciales por defecto |
+| ---------- | --------------------- | ------------------------ |
+| Intranet   | http://intranet.nike.com   | Sin auth                 |
+| Portal     | http://portal.nike.com     | Sin auth                 |
+| Keycloak   | http://auth.nike.com       | `admin` / (ver .env)     |
+| Gitea      | http://git.nike.com        | Registrarse o SSO        |
+| Grafana    | http://grafana.nike.com    | `admin` / (ver .env)     |
+| Prometheus | http://prometheus.nike.com | Sin auth                 |
+| Portainer  | http://portainer.nike.com  | Setup inicial            |
+| AdGuard    | http://adguard.nike.com    | `admin` / (ver .env)     |
+| WireGuard  | http://vpn.nike.com        | Password hash (ver .env) |
 
 ---
 
@@ -323,7 +330,7 @@ docker compose up -d
 sudo ./backups/scripts/backup.sh
 
 # Restore
-sudo ./backups/scripts/restore.sh /opt/lab-backups/lab-backup-XXXXXXXX_XXXXXX.tar.gz
+sudo ./backups/scripts/restore.sh /opt/nike-backups/nike-backup-XXXXXXXX_XXXXXX.tar.gz
 
 # Detener todo
 docker compose down
@@ -348,3 +355,16 @@ docker compose down -v
 
 Todos los componentes utilizados son open source bajo sus respectivas licencias.
 Este proyecto de configuración está bajo la licencia MIT.
+
+=================================================================
+RESUMEN DE CREDENCIALES CONFIGURADAS  
+=================================================================
+IP del Servidor: 192.168.2.102
+PostgreSQL User: nikeadmin
+PostgreSQL Pass: tYjtoNt4YuM0dq8EBHt5iQ
+Keycloak Admin Pass: mv3aIsvgidhMDbL3EFjFw
+Grafana Admin Pass: LSZL75pq6cSqbrcZroxCQg
+Portainer Admin Pass: eZIiroEwCtZZOWlhOoubw
+AdGuard Home User: admin
+AdGuard Home Pass: ewuOlSJOj84InEpq
+WireGuard VPN Pass: LhqwXGcBOFiskVFy

@@ -1,5 +1,5 @@
 # =============================================================================
-# ENTERPRISE LAB PLATFORM — Docker Compose
+# NIKE ENTERPRISE PLATFORM — Docker Compose
 # =============================================================================
 # Ubuntu Server 24.04 LTS | Intel i5-10400F | 16 GB RAM
 # Todas las imágenes con versión fija. Sin :latest.
@@ -7,42 +7,42 @@
 
 networks:
   frontend:
-    name: lab_frontend
+    name: nike_frontend
     driver: bridge
   backend:
-    name: lab_backend
+    name: nike_backend
     driver: bridge
   monitoring:
-    name: lab_monitoring
+    name: nike_monitoring
     driver: bridge
   identity:
-    name: lab_identity
+    name: nike_identity
     driver: bridge
   vpn:
-    name: lab_vpn
+    name: nike_vpn
     driver: bridge
 
 volumes:
   postgres_data:
-    name: lab_postgres_data
+    name: nike_postgres_data
   keycloak_data:
-    name: lab_keycloak_data
+    name: nike_keycloak_data
   gitea_data:
-    name: lab_gitea_data
+    name: nike_gitea_data
   grafana_data:
-    name: lab_grafana_data
+    name: nike_grafana_data
   prometheus_data:
-    name: lab_prometheus_data
+    name: nike_prometheus_data
   portainer_data:
-    name: lab_portainer_data
+    name: nike_portainer_data
   adguard_work:
-    name: lab_adguard_work
+    name: nike_adguard_work
   adguard_conf:
-    name: lab_adguard_conf
+    name: nike_adguard_conf
   wireguard_data:
-    name: lab_wireguard_data
+    name: nike_wireguard_data
   traefik_certs:
-    name: lab_traefik_certs
+    name: nike_traefik_certs
 
 services:
   # ===========================================================================
@@ -53,7 +53,7 @@ services:
   # ===========================================================================
   traefik:
     image: traefik:${TRAEFIK_VERSION}
-    container_name: lab-traefik
+    container_name: nike-traefik
     restart: unless-stopped
     ports:
       - "80:80"
@@ -101,7 +101,7 @@ services:
   # ===========================================================================
   adguard:
     image: adguard/adguardhome:${ADGUARD_VERSION}
-    container_name: lab-adguard
+    container_name: nike-adguard
     restart: unless-stopped
     ports:
       - "53:53/tcp"
@@ -124,7 +124,7 @@ services:
       - "traefik.http.routers.adguard.rule=Host(`adguard.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.adguard.entrypoints=web"
       - "traefik.http.services.adguard.loadbalancer.server.port=3000"
-      - "traefik.docker.network=lab_frontend"
+      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000"]
       interval: 30s
@@ -145,7 +145,7 @@ services:
   # ===========================================================================
   postgres:
     image: postgres:${POSTGRES_VERSION}
-    container_name: lab-postgres
+    container_name: nike-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -184,7 +184,7 @@ services:
   # ===========================================================================
   keycloak:
     image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
-    container_name: lab-keycloak
+    container_name: nike-keycloak
     restart: unless-stopped
     command:
       - start
@@ -227,7 +227,7 @@ services:
       - "traefik.http.routers.keycloak.rule=Host(`auth.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.keycloak.entrypoints=web"
       - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
-      - "traefik.docker.network=lab_frontend"
+      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200'"]
       interval: 30s
@@ -248,7 +248,7 @@ services:
   # ===========================================================================
   gitea:
     image: gitea/gitea:${GITEA_VERSION}
-    container_name: lab-gitea
+    container_name: nike-gitea
     restart: unless-stopped
     environment:
       USER_UID: "1000"
@@ -293,7 +293,7 @@ services:
       - "traefik.http.routers.gitea.rule=Host(`git.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.gitea.entrypoints=web"
       - "traefik.http.services.gitea.loadbalancer.server.port=3000"
-      - "traefik.docker.network=lab_frontend"
+      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD", "curl", "-fSs", "http://127.0.0.1:3000/api/healthz"]
       interval: 30s
@@ -314,7 +314,7 @@ services:
   # ===========================================================================
   portainer:
     image: portainer/portainer-ce:${PORTAINER_VERSION}
-    container_name: lab-portainer
+    container_name: nike-portainer
     restart: unless-stopped
     # Contraseña se configura en el primer acceso vía web UI
     volumes:
@@ -334,7 +334,7 @@ services:
       - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.portainer.entrypoints=web"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
-      - "traefik.docker.network=lab_frontend"
+      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:9000/api/system/status"]
       interval: 30s
@@ -355,7 +355,7 @@ services:
   # ===========================================================================
   prometheus:
     image: prom/prometheus:${PROMETHEUS_VERSION}
-    container_name: lab-prometheus
+    container_name: nike-prometheus
     restart: unless-stopped
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -384,7 +384,7 @@ services:
       - "traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.prometheus.entrypoints=web"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
-      - "traefik.docker.network=lab_frontend"
+      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:9090/-/healthy"]
       interval: 30s
@@ -405,7 +405,7 @@ services:
   # ===========================================================================
   grafana:
     image: grafana/grafana:${GRAFANA_VERSION}
-    container_name: lab-grafana
+    container_name: nike-grafana
     restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
@@ -446,7 +446,7 @@ services:
       - "traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.grafana.entrypoints=web"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
-      - "traefik.docker.network=lab_frontend"
+      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
       interval: 30s
@@ -467,7 +467,7 @@ services:
   # ===========================================================================
   node-exporter:
     image: prom/node-exporter:${NODE_EXPORTER_VERSION}
-    container_name: lab-node-exporter
+    container_name: nike-node-exporter
     restart: unless-stopped
     command:
       - "--path.procfs=/host/proc"
@@ -508,7 +508,7 @@ services:
   # ===========================================================================
   wireguard:
     image: ghcr.io/wg-easy/wg-easy:${WGEASY_VERSION}
-    container_name: lab-wireguard
+    container_name: nike-wireguard
     restart: unless-stopped
     environment:
       LANGUAGE: es
@@ -545,7 +545,7 @@ services:
       - "traefik.http.routers.wireguard.rule=Host(`vpn.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.wireguard.entrypoints=web"
       - "traefik.http.services.wireguard.loadbalancer.server.port=51821"
-      - "traefik.docker.network=lab_frontend"
+      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:51821"]
       interval: 30s
@@ -566,7 +566,7 @@ services:
   # ===========================================================================
   intranet:
     image: nginx:${NGINX_VERSION}
-    container_name: lab-intranet
+    container_name: nike-intranet
     restart: unless-stopped
     volumes:
       - ./intranet/html:/usr/share/nginx/html:ro
@@ -584,7 +584,7 @@ services:
       - "traefik.http.routers.intranet.rule=Host(`intranet.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.intranet.entrypoints=web"
       - "traefik.http.services.intranet.loadbalancer.server.port=80"
-      - "traefik.docker.network=lab_frontend"
+      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:80"]
       interval: 30s
@@ -605,7 +605,7 @@ services:
   # ===========================================================================
   portal:
     image: nginx:${NGINX_VERSION}
-    container_name: lab-portal
+    container_name: nike-portal
     restart: unless-stopped
     volumes:
       - ./portal/html:/usr/share/nginx/html:ro
@@ -623,7 +623,7 @@ services:
       - "traefik.http.routers.portal.rule=Host(`portal.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.portal.entrypoints=web"
       - "traefik.http.services.portal.loadbalancer.server.port=80"
-      - "traefik.docker.network=lab_frontend"
+      - "traefik.docker.network=nike_frontend"
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:80"]
       interval: 30s

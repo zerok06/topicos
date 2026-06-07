@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # =============================================================================
-# ENTERPRISE LAB PLATFORM - REPARADOR DE SERVIDOR (RED / RESOLVED / SSH / UFW)
+# NIKE ENTERPRISE PLATFORM - REPARADOR DE SERVIDOR (RED / RESOLVED / SSH / UFW)
 # =============================================================================
 # S.O. Recomendado: Ubuntu Server
 # Este script automatiza la resolucion del puerto 53 (AdGuard), la instalacion/

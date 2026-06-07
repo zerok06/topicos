@@ -33,7 +33,7 @@ providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: lab_frontend
+    network: nike_frontend
     watch: true
   file:
     directory: /etc/traefik/dynamic

@@ -22,49 +22,49 @@
                 <mxCell id="server" value="SERVIDOR FISICO (Ubuntu Server 24.04 LTS) — IP Estatica: 192.168.1.100 — Intel i5 | 16 GB RAM" style="swimlane;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#1e293b;fontColor=#f8fafc;fontStyle=1;fontSize=14;startSize=35;arcSize=6;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="300" y="40" width="1120" height="890" as="geometry"/>
                 </mxCell>
-                <mxCell id="net-frontend" value="DOCKER NETWORK: lab_frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0284c7;strokeColor=none;opacity=8;align=left;verticalAlign=top;fontColor=#38bdf8;fontStyle=1;fontSize=11;spacingLeft=15;spacingTop=10;" parent="server" vertex="1">
+                <mxCell id="net-frontend" value="DOCKER NETWORK: nike_frontend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0284c7;strokeColor=none;opacity=8;align=left;verticalAlign=top;fontColor=#38bdf8;fontStyle=1;fontSize=11;spacingLeft=15;spacingTop=10;" parent="server" vertex="1">
                     <mxGeometry x="25" y="160" width="480" height="700" as="geometry"/>
                 </mxCell>
-                <mxCell id="net-backend" value="DOCKER NETWORK: lab_backend, identity &amp; monitoring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=none;opacity=8;align=right;verticalAlign=top;fontColor=#34d399;fontStyle=1;fontSize=11;spacingRight=15;spacingTop=10;" parent="server" vertex="1">
+                <mxCell id="net-backend" value="DOCKER NETWORK: nike_backend, identity &amp; monitoring" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=none;opacity=8;align=right;verticalAlign=top;fontColor=#34d399;fontStyle=1;fontSize=11;spacingRight=15;spacingTop=10;" parent="server" vertex="1">
                     <mxGeometry x="535" y="160" width="560" height="700" as="geometry"/>
                 </mxCell>
-                <mxCell id="wireguard" value="[VPN] WireGuard VPN&lt;br/&gt;&lt;b&gt;lab-wireguard (wg-easy)&lt;/b&gt;&lt;br/&gt;Acceso Remoto Seguro&lt;br/&gt;Port: 51820 UDP (Host)&lt;br/&gt;UI: vpn.lab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6366f1;strokeColor=#4f46e5;fontColor=#ffffff;fontSize=11;" parent="server" vertex="1">
+                <mxCell id="wireguard" value="[VPN] WireGuard VPN&lt;br/&gt;&lt;b&gt;nike-wireguard (wg-easy)&lt;/b&gt;&lt;br/&gt;Acceso Remoto Seguro&lt;br/&gt;Port: 51820 UDP (Host)&lt;br/&gt;UI: vpn.nike.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6366f1;strokeColor=#4f46e5;fontColor=#ffffff;fontSize=11;" parent="server" vertex="1">
                     <mxGeometry x="270" y="55" width="220" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="adguard" value="[DNS] AdGuard Home&lt;br/&gt;&lt;b&gt;lab-adguard&lt;/b&gt;&lt;br/&gt;DNS Cache &amp;amp; Local Rewrites&lt;br/&gt;Port: 53 TCP/UDP&lt;br/&gt;UI: adguard.lab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#10b981;strokeColor=#059669;fontColor=#ffffff;fontSize=11;" parent="server" vertex="1">
+                <mxCell id="adguard" value="[DNS] AdGuard Home&lt;br/&gt;&lt;b&gt;nike-adguard&lt;/b&gt;&lt;br/&gt;DNS Cache &amp;amp; Local Rewrites&lt;br/&gt;Port: 53 TCP/UDP&lt;br/&gt;UI: adguard.nike.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#10b981;strokeColor=#059669;fontColor=#ffffff;fontSize=11;" parent="server" vertex="1">
                     <mxGeometry x="630" y="55" width="220" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="traefik" value="[Proxy] Traefik Reverse Proxy&lt;br/&gt;&lt;b&gt;lab-traefik&lt;/b&gt;&lt;br/&gt;Puertos Host: 80 / 443&lt;br/&gt;Terminacion TLS Lista&lt;br/&gt;Enrutador por Hostname" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f43f5e;strokeColor=#e11d48;fontColor=#ffffff;fontStyle=1;fontSize=11;" parent="server" vertex="1">
+                <mxCell id="traefik" value="[Proxy] Traefik Reverse Proxy&lt;br/&gt;&lt;b&gt;nike-traefik&lt;/b&gt;&lt;br/&gt;Puertos Host: 80 / 443&lt;br/&gt;Terminacion TLS Lista&lt;br/&gt;Enrutador por Hostname" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f43f5e;strokeColor=#e11d48;fontColor=#ffffff;fontStyle=1;fontSize=11;" parent="server" vertex="1">
                     <mxGeometry x="250" y="190" width="200" height="90" as="geometry"/>
                 </mxCell>
-                <mxCell id="portal" value="[Nginx] Portal Publico&lt;br/&gt;&lt;b&gt;lab-portal&lt;/b&gt;&lt;br/&gt;Punto de Entrada Libre&lt;br/&gt;URL: http://portal.lab&lt;br/&gt;Sin Autenticacion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#06b6d4;strokeColor=#0891b2;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
+                <mxCell id="portal" value="[Nginx] Portal Publico&lt;br/&gt;&lt;b&gt;nike-portal&lt;/b&gt;&lt;br/&gt;Punto de Entrada Libre&lt;br/&gt;URL: http://portal.nike.com&lt;br/&gt;Sin Autenticacion" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#06b6d4;strokeColor=#0891b2;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
                     <mxGeometry x="45" y="320" width="180" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="intranet" value="[Nginx] Intranet Interna&lt;br/&gt;&lt;b&gt;lab-intranet&lt;/b&gt;&lt;br/&gt;Recursos de la Empresa&lt;br/&gt;URL: http://intranet.lab&lt;br/&gt;[Acceso Protegido]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3b82f6;strokeColor=#2563eb;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
+                <mxCell id="intranet" value="[Nginx] Intranet Interna&lt;br/&gt;&lt;b&gt;nike-intranet&lt;/b&gt;&lt;br/&gt;Recursos de la Empresa&lt;br/&gt;URL: http://intranet.nike.com&lt;br/&gt;[Acceso Protegido]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3b82f6;strokeColor=#2563eb;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
                     <mxGeometry x="45" y="450" width="180" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="portainer" value="[Docker] Portainer CE&lt;br/&gt;&lt;b&gt;lab-portainer&lt;/b&gt;&lt;br/&gt;Administracion de Docker&lt;br/&gt;URL: http://portainer.lab&lt;br/&gt;Montaje: docker.sock" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#334155;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
+                <mxCell id="portainer" value="[Docker] Portainer CE&lt;br/&gt;&lt;b&gt;nike-portainer&lt;/b&gt;&lt;br/&gt;Administracion de Docker&lt;br/&gt;URL: http://portainer.nike.com&lt;br/&gt;Montaje: docker.sock" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#334155;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
                     <mxGeometry x="45" y="580" width="180" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="keycloak" value="[IAM] Keycloak SSO&lt;br/&gt;&lt;b&gt;lab-keycloak&lt;/b&gt;&lt;br/&gt;Servicios de Identidad&lt;br/&gt;URL: http://auth.lab&lt;br/&gt;Autenticador OIDC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d97706;strokeColor=#b45309;fontColor=#ffffff;fontStyle=1;fontSize=11;" parent="server" vertex="1">
+                <mxCell id="keycloak" value="[IAM] Keycloak SSO&lt;br/&gt;&lt;b&gt;nike-keycloak&lt;/b&gt;&lt;br/&gt;Servicios de Identidad&lt;br/&gt;URL: http://auth.nike.com&lt;br/&gt;Autenticador OIDC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d97706;strokeColor=#b45309;fontColor=#ffffff;fontStyle=1;fontSize=11;" parent="server" vertex="1">
                     <mxGeometry x="560" y="320" width="180" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="gitea" value="[Git] Gitea Server&lt;br/&gt;&lt;b&gt;lab-gitea&lt;/b&gt;&lt;br/&gt;Repositorios Corporativos&lt;br/&gt;URL: http://git.lab&lt;br/&gt;SSH Port: 2222 (Host)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#65a30d;strokeColor=#4d7c0f;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
+                <mxCell id="gitea" value="[Git] Gitea Server&lt;br/&gt;&lt;b&gt;nike-gitea&lt;/b&gt;&lt;br/&gt;Repositorios Corporativos&lt;br/&gt;URL: http://git.nike.com&lt;br/&gt;SSH Port: 2222 (Host)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#65a30d;strokeColor=#4d7c0f;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
                     <mxGeometry x="560" y="450" width="180" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="postgres" value="[SQL] PostgreSQL Engine&lt;br/&gt;&lt;b&gt;lab-postgres&lt;/b&gt;&lt;br/&gt;Base de Datos Relacional&lt;br/&gt;Schema: keycloak, gitea, grafana&lt;br/&gt;Port Interno: 5432" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15;whiteSpace=wrap;html=1;fillColor=#475569;strokeColor=#334155;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
+                <mxCell id="postgres" value="[SQL] PostgreSQL Engine&lt;br/&gt;&lt;b&gt;nike-postgres&lt;/b&gt;&lt;br/&gt;Base de Datos Relacional&lt;br/&gt;Schema: keycloak, gitea, grafana&lt;br/&gt;Port Interno: 5432" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15;whiteSpace=wrap;html=1;fillColor=#475569;strokeColor=#334155;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
                     <mxGeometry x="560" y="580" width="180" height="90" as="geometry"/>
                 </mxCell>
-                <mxCell id="grafana" value="[Metricas] Grafana UI&lt;br/&gt;&lt;b&gt;lab-grafana&lt;/b&gt;&lt;br/&gt;Visualizaciones / Dashboards&lt;br/&gt;URL: http://grafana.lab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ea580c;strokeColor=#d946ef;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
+                <mxCell id="grafana" value="[Metricas] Grafana UI&lt;br/&gt;&lt;b&gt;nike-grafana&lt;/b&gt;&lt;br/&gt;Visualizaciones / Dashboards&lt;br/&gt;URL: http://grafana.nike.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ea580c;strokeColor=#d946ef;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
                     <mxGeometry x="870" y="320" width="190" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="prometheus" value="[TSDB] Prometheus&lt;br/&gt;&lt;b&gt;lab-prometheus&lt;/b&gt;&lt;br/&gt;Recoleccion de Metricas&lt;br/&gt;URL: http://prometheus.lab" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c026d3;strokeColor=#c084fc;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
+                <mxCell id="prometheus" value="[TSDB] Prometheus&lt;br/&gt;&lt;b&gt;nike-prometheus&lt;/b&gt;&lt;br/&gt;Recoleccion de Metricas&lt;br/&gt;URL: http://prometheus.nike.com" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c026d3;strokeColor=#c084fc;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
                     <mxGeometry x="870" y="450" width="190" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="nodeexporter" value="[Metricas] Node Exporter&lt;br/&gt;&lt;b&gt;lab-node-exporter&lt;/b&gt;&lt;br/&gt;Metricas del Sistema Host&lt;br/&gt;Port Interno: 9100" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5b21b6;strokeColor=#7c3aed;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
+                <mxCell id="nodeexporter" value="[Metricas] Node Exporter&lt;br/&gt;&lt;b&gt;nike-node-exporter&lt;/b&gt;&lt;br/&gt;Metricas del Sistema Host&lt;br/&gt;Port Interno: 9100" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#5b21b6;strokeColor=#7c3aed;fontColor=#ffffff;fontSize=10;" parent="server" vertex="1">
                     <mxGeometry x="870" y="580" width="190" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="route-portal" value="portal.lab:80" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="portal" edge="1">
+                <mxCell id="route-portal" value="portal.nike.com:80" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="portal" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="240" y="258"/>
@@ -73,7 +73,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="route-intranet" value="intranet.lab:80" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0;exitY=0.9;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="intranet" edge="1">
+                <mxCell id="route-intranet" value="intranet.nike.com:80" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0;exitY=0.9;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="intranet" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array points="230,271;115,271;115,450" as="points">
                             <mxPoint x="230" y="271"/>
@@ -82,7 +82,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="route-portainer" value="portainer.lab:9000" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0.15;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="portainer" edge="1">
+                <mxCell id="route-portainer" value="portainer.nike.com:9000" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0.15;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="portainer" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array points="280,300;95,300;95,580" as="points">
                             <mxPoint x="280" y="300"/>
@@ -91,7 +91,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="route-keycloak" value="auth.lab:8080" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="keycloak" edge="1">
+                <mxCell id="route-keycloak" value="auth.nike.com:8080" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="keycloak" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array points="400,300;650,300;650,320" as="points">
                             <mxPoint x="400" y="300"/>
@@ -100,7 +100,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="route-gitea" value="git.lab:3000" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0.9;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="gitea" edge="1">
+                <mxCell id="route-gitea" value="git.nike.com:3000" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=0.9;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="gitea" edge="1">
                     <mxGeometry x="-0.0256" y="-10" relative="1" as="geometry">
                         <Array points="430,290;450,290;450,430;650,430;650,450" as="points">
                             <mxPoint x="430" y="290"/>
@@ -112,7 +112,7 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="route-grafana" value="grafana.lab:3000" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="grafana" edge="1">
+                <mxCell id="route-grafana" value="grafana.nike.com:3000" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="grafana" edge="1">
                     <mxGeometry x="0.013" y="10" relative="1" as="geometry">
                         <Array points="450,258;480,258;480,300;965,300;965,320" as="points">
                             <mxPoint x="450" y="258"/>
@@ -124,7 +124,7 @@
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="route-prometheus" value="prometheus.lab:9090" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=1;exitY=0.9;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="prometheus" edge="1">
+                <mxCell id="route-prometheus" value="prometheus.nike.com:9090" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#f43f5e;strokeWidth=1.5;fontSize=10;exitX=1;exitY=0.9;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="server" source="traefik" target="prometheus" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array points="450,271;495,271;495,430;965,430;965,450" as="points">
                             <mxPoint x="450" y="271"/>

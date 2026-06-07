@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # =============================================================================
-# ENTERPRISE LAB PLATFORM - CONFIGURADOR INICIAL DE ENTORNO
+# NIKE ENTERPRISE PLATFORM - CONFIGURADOR INICIAL DE ENTORNO
 # =============================================================================
 # S.O. Recomendado: Ubuntu Server
 # Copia el .env.example a .env, autodetecta la IP local del servidor,
@@ -130,23 +130,23 @@ sed -i "s|WG_HOST=.*|WG_HOST=$IP_CONFIRMED|g" .env
 sed -i "s|WG_DEFAULT_DNS=.*|WG_DEFAULT_DNS=$IP_CONFIRMED|g" .env
 
 # PostgreSQL
-sed -i "s|POSTGRES_USER=.*|POSTGRES_USER=labadmin|g" .env
+sed -i "s|POSTGRES_USER=.*|POSTGRES_USER=nikeadmin|g" .env
 sed -i "s|POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=$PG_PASS|g" .env
 
 # Keycloak
 sed -i "s|KC_ADMIN_PASSWORD=.*|KC_ADMIN_PASSWORD=$KC_PASS|g" .env
-sed -i "s|KC_DB_USERNAME=.*|KC_DB_USERNAME=labadmin|g" .env
+sed -i "s|KC_DB_USERNAME=.*|KC_DB_USERNAME=nikeadmin|g" .env
 sed -i "s|KC_DB_PASSWORD=.*|KC_DB_PASSWORD=$PG_PASS|g" .env
 
 # Gitea
-sed -i "s|GITEA_DB_USER=.*|GITEA_DB_USER=labadmin|g" .env
+sed -i "s|GITEA_DB_USER=.*|GITEA_DB_USER=nikeadmin|g" .env
 sed -i "s|GITEA_DB_PASSWD=.*|GITEA_DB_PASSWD=$PG_PASS|g" .env
 sed -i "s|GITEA_SECRET_KEY=.*|GITEA_SECRET_KEY=$GITEA_KEY|g" .env
 sed -i "s|GITEA_INTERNAL_TOKEN=.*|GITEA_INTERNAL_TOKEN=$GITEA_TOKEN|g" .env
 
 # Grafana
 sed -i "s|GF_SECURITY_ADMIN_PASSWORD=.*|GF_SECURITY_ADMIN_PASSWORD=$GF_PASS|g" .env
-sed -i "s|GF_DATABASE_USER=.*|GF_DATABASE_USER=labadmin|g" .env
+sed -i "s|GF_DATABASE_USER=.*|GF_DATABASE_USER=nikeadmin|g" .env
 sed -i "s|GF_DATABASE_PASSWORD=.*|GF_DATABASE_PASSWORD=$PG_PASS|g" .env
 
 # Portainer
@@ -161,7 +161,7 @@ if [ -f adguard/conf/AdGuardHome.yaml ]; then
     info_msg "Actualizando archivo de configuración física de AdGuard Home..."
     # Reemplazar la contraseña de admin (usando el hash RAW con un solo $)
     sed -i "s|password: .*|password: $ADGUARD_RAW_HASH|g" adguard/conf/AdGuardHome.yaml
-    # Reemplazar todas las IPs de DNS Rewrites (.lab)
+    # Reemplazar todas las IPs de DNS Rewrites (.nike.com)
     sed -i "s|answer: .*|answer: $IP_CONFIRMED|g" adguard/conf/AdGuardHome.yaml
     success_msg "Archivo adguard/conf/AdGuardHome.yaml actualizado correctamente."
 fi
@@ -178,7 +178,7 @@ echo -e "\n${YELLOW}============================================================
 echo -e "${GREEN}          RESUMEN DE CREDENCIALES CONFIGURADAS                   ${NC}"
 echo -e "${YELLOW}=================================================================${NC}"
 echo -e "IP del Servidor:       ${GREEN}$IP_CONFIRMED${NC}"
-echo -e "PostgreSQL User:       ${GREEN}labadmin${NC}"
+echo -e "PostgreSQL User:       ${GREEN}nikeadmin${NC}"
 echo -e "PostgreSQL Pass:       ${GREEN}$PG_PASS${NC}"
 echo -e "Keycloak Admin Pass:   ${GREEN}$KC_PASS${NC}"
 echo -e "Grafana Admin Pass:    ${GREEN}$GF_PASS${NC}"

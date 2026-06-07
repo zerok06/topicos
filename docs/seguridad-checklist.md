@@ -115,7 +115,7 @@
 - [ ] Revisar changelogs de servicios para CVEs
 - [ ] Verificar integridad de backups
   ```bash
-  sha256sum -c /opt/lab-backups/lab-backup-*.sha256
+  sha256sum -c /opt/nike-backups/nike-backup-*.sha256
   ```
 - [ ] Revisar peers VPN activos y remover los no autorizados
 
@@ -137,8 +137,8 @@ Cuando se quiera habilitar HTTPS:
    - `certificatesResolvers`
    - Redirección HTTP → HTTPS en entrypoints
 3. **Actualizar URLs** en `.env`:
-   - `GITEA_ROOT_URL=https://git.lab`
-   - `GF_SERVER_ROOT_URL=https://grafana.lab`
+   - `GITEA_ROOT_URL=https://git.nike.com`
+   - `GF_SERVER_ROOT_URL=https://grafana.nike.com`
 4. **Actualizar Keycloak**:
    - Cambiar `sslRequired` a `external` en realm
 5. **Actualizar URLs** en `realm-export.json` (redirectUris)
@@ -158,7 +158,7 @@ data/
 
 # Backups
 backups/data/
-/opt/lab-backups/
+/opt/nike-backups/
 
 # Logs
 *.log

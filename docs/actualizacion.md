@@ -12,7 +12,7 @@
 ### 1. Backup Pre-Actualización
 
 ```bash
-cd /opt/lab-platform
+cd /opt/nike-platform
 sudo ./backups/scripts/backup.sh
 ```
 
@@ -50,7 +50,7 @@ docker compose logs -f grafana
 docker compose ps grafana
 
 # Probar acceso
-curl -s -o /dev/null -w "%{http_code}" http://grafana.lab
+curl -s -o /dev/null -w "%{http_code}" http://grafana.nike.com
 ```
 
 ### 6. Rollback (si hay problemas)
@@ -65,7 +65,7 @@ docker compose pull grafana
 docker compose up -d grafana
 
 # Si los datos están corruptos, hacer restore completo
-sudo ./backups/scripts/restore.sh /opt/lab-backups/lab-backup-XXXX.tar.gz
+sudo ./backups/scripts/restore.sh /opt/nike-backups/nike-backup-XXXX.tar.gz
 ```
 
 ---
@@ -92,13 +92,13 @@ docker compose logs -f postgres
 
 # Para major upgrade:
 # a) Hacer pg_dumpall con la versión actual
-docker exec lab-postgres pg_dumpall -U labadmin > /tmp/pg_full_dump.sql
+docker exec nike-postgres pg_dumpall -U nikeadmin > /tmp/pg_full_dump.sql
 
 # b) Parar todo
 docker compose down
 
 # c) Eliminar volumen de datos
-docker volume rm lab_postgres_data
+docker volume rm nike_postgres_data
 
 # d) Cambiar versión y levantar
 nano .env  # POSTGRES_VERSION=18.x
@@ -106,7 +106,7 @@ docker compose up -d postgres
 sleep 10
 
 # e) Restaurar dump
-cat /tmp/pg_full_dump.sql | docker exec -i lab-postgres psql -U labadmin -d postgres
+cat /tmp/pg_full_dump.sql | docker exec -i nike-postgres psql -U nikeadmin -d postgres
 
 # f) Levantar el resto
 docker compose up -d
@@ -123,7 +123,7 @@ docker compose pull keycloak
 docker compose up -d keycloak
 
 # Verificar que el realm sigue funcionando
-curl -s http://auth.lab/realms/lab/.well-known/openid_configuration | head
+curl -s http://auth.nike.com/realms/lab/.well-known/openid_configuration | head
 ```
 
 ### Traefik
@@ -138,8 +138,8 @@ docker compose up -d traefik
 docker compose logs -f traefik
 
 # Verificar que todos los routers funcionan
-curl -s http://auth.lab -o /dev/null -w "%{http_code}"
-curl -s http://git.lab -o /dev/null -w "%{http_code}"
+curl -s http://auth.nike.com -o /dev/null -w "%{http_code}"
+curl -s http://git.nike.com -o /dev/null -w "%{http_code}"
 ```
 
 ### Gitea
@@ -151,7 +151,7 @@ docker compose pull gitea
 docker compose up -d gitea
 
 # Verificar
-curl -s http://git.lab/api/healthz
+curl -s http://git.nike.com/api/healthz
 ```
 
 ---
