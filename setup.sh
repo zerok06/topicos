@@ -55,7 +55,7 @@ if [ -z "$IP_DETECTED" ]; then
     IP_DETECTED=$(hostname -I | awk '{print $1}' || true)
 fi
 if [ -z "$IP_DETECTED" ]; then
-    IP_DETECTED="192.168.1.100"
+    IP_DETECTED="192.168.2.101"
 fi
 
 read -p "Confirma la IP de este servidor (Por defecto: $IP_DETECTED): " IP_CONFIRMED
