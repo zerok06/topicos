@@ -156,6 +156,16 @@ sed -i "s|PORTAINER_ADMIN_PASSWORD=.*|PORTAINER_ADMIN_PASSWORD=$PT_PASS|g" .env
 sed -i "s|ADGUARD_PASSWORD_HASH=.*|ADGUARD_PASSWORD_HASH=$ADGUARD_ESCAPED_HASH|g" .env
 sed -i "s|WGEASY_PASSWORD_HASH=.*|WGEASY_PASSWORD_HASH=$WG_ESCAPED_HASH|g" .env
 
+# Actualizar el archivo AdGuardHome.yaml físico si existe
+if [ -f adguard/conf/AdGuardHome.yaml ]; then
+    info_msg "Actualizando archivo de configuración física de AdGuard Home..."
+    # Reemplazar la contraseña de admin (usando el hash RAW con un solo $)
+    sed -i "s|password: .*|password: $ADGUARD_RAW_HASH|g" adguard/conf/AdGuardHome.yaml
+    # Reemplazar todas las IPs de DNS Rewrites (.lab)
+    sed -i "s|answer: .*|answer: $IP_CONFIRMED|g" adguard/conf/AdGuardHome.yaml
+    success_msg "Archivo adguard/conf/AdGuardHome.yaml actualizado correctamente."
+fi
+
 # Asegurar permisos de ejecución para otros scripts utilitarios
 info_msg "Asegurando permisos para scripts de backups e inicialización..."
 chmod +x backups/scripts/*.sh || true
