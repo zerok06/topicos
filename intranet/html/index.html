@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema Interno — Acceso exclusivo para empleados autorizados">
+    <title>Sistema Interno — Enterprise Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.85);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-cyan: #06b6d4;
+            --accent-indigo: #6366f1;
+            --border: rgba(148, 163, 184, 0.08);
+            --glow-blue: 0 0 60px rgba(59, 130, 246, 0.12);
+            --glow-purple: 0 0 60px rgba(139, 92, 246, 0.12);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background:
+                radial-gradient(ellipse at 15% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Top bar */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            background: var(--bg-card);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .topbar-logo {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+        }
+
+        .topbar-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+
+        .topbar-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.75rem;
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            color: var(--accent-rose);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            color: var(--accent-emerald);
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            background: var(--accent-emerald);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
+            50% { opacity: 0.6; box-shadow: 0 0 16px rgba(16, 185, 129, 0.6); }
+        }
+
+        /* Hero section */
+        .hero {
+            text-align: center;
+            padding: 2rem 0 3rem;
+        }
+
+        .hero-shield {
+            width: 80px; height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: var(--glow-blue);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .hero-restricted {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            padding: 0.6rem 1.2rem;
+            background: rgba(244, 63, 94, 0.08);
+            border: 1px solid rgba(244, 63, 94, 0.15);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: var(--accent-rose);
+            font-weight: 500;
+        }
+
+        /* Service categories */
+        .category {
+            margin-bottom: 2rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-icon {
+            font-size: 1.1rem;
+        }
+
+        .category-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .category-count {
+            margin-left: auto;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            background: rgba(148, 163, 184, 0.08);
+            border-radius: 9999px;
+            color: var(--text-muted);
+        }
+
+        /* Service cards */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .service-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.25rem;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::after {
+            content: '→';
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%) translateX(5px);
+            opacity: 0;
+            transition: all 0.25s;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .service-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+            box-shadow: var(--glow-blue);
+        }
+
+        .service-card:hover::after {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .card-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .card-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-desc {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-url {
+            font-size: 0.7rem;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            color: var(--accent-blue);
+            opacity: 0.7;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+        footer .separator { margin: 0 0.5rem; opacity: 0.3; }
+
+        #clock {
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .container { padding: 1rem; }
+            .hero h1 { font-size: 1.75rem; }
+            .services-grid { grid-template-columns: 1fr; }
+            .topbar { flex-direction: column; gap: 0.75rem; text-align: center; }
+            .topbar-right { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="topbar-logo">🏢</div>
+                <span class="topbar-title">Enterprise Lab</span>
+                <span class="topbar-badge">🔒 Acceso Restringido</span>
+            </div>
+            <div class="topbar-right">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span>Sistemas Online</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <div class="hero">
+            <div class="hero-shield">🛡️</div>
+            <h1>Sistema <span class="gradient">Interno</span></h1>
+            <p class="hero-subtitle">
+                Panel de acceso exclusivo para empleados autorizados.
+                Todos los servicios requieren autenticación corporativa vía SSO.
+            </p>
+            <div class="hero-restricted">
+                🚫 Los invitados y usuarios externos NO tienen acceso a este sistema.
+                <a href="http://portal.lab" style="color: var(--accent-blue); margin-left: 0.5rem;">Ir al Portal Público →</a>
+            </div>
+        </div>
+
+        <!-- Identity & Access -->
+        <div class="category">
+            <div class="category-header">
+                <span class="category-icon">🔐</span>
+                <span class="category-title">Identidad y Acceso</span>
+                <span class="category-count">2 servicios</span>
+            </div>
+            <div class="services-grid">
+                <a href="http://auth.lab" class="service-card">
+                    <div class="card-icon" style="background: rgba(139, 92, 246, 0.12); color: #a78bfa;">🔑</div>
+                    <div class="card-body">
+                        <div class="card-title">Keycloak — Single Sign-On</div>
+                        <div class="card-desc">Gestión centralizada de usuarios, roles, grupos y autenticación multifactor (MFA).</div>
+                        <div class="card-url">auth.lab</div>
+                    </div>
+                </a>
+                <a href="http://portainer.lab" class="service-card">
+                    <div class="card-icon" style="background: rgba(6, 182, 212, 0.12); color: #67e8f9;">🐳</div>
+                    <div class="card-body">
+                        <div class="card-title">Portainer — Gestión Docker</div>
+                        <div class="card-desc">Control visual de contenedores, volúmenes, redes e imágenes Docker.</div>
+                        <div class="card-url">portainer.lab</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Development -->
+        <div class="category">
+            <div class="category-header">
+                <span class="category-icon">💻</span>
+                <span class="category-title">Desarrollo</span>
+                <span class="category-count">1 servicio</span>
+            </div>
+            <div class="services-grid">
+                <a href="http://git.lab" class="service-card">
+                    <div class="card-icon" style="background: rgba(16, 185, 129, 0.12); color: #6ee7b7;">📦</div>
+                    <div class="card-body">
+                        <div class="card-title">Gitea — Repositorio Git</div>
+                        <div class="card-desc">Servidor Git privado con issues, pull requests y CI/CD. Integrado con SSO corporativo.</div>
+                        <div class="card-url">git.lab · SSH: puerto 2222</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Monitoring -->
+        <div class="category">
+            <div class="category-header">
+                <span class="category-icon">📊</span>
+                <span class="category-title">Monitorización y Observabilidad</span>
+                <span class="category-count">2 servicios</span>
+            </div>
+            <div class="services-grid">
+                <a href="http://grafana.lab" class="service-card">
+                    <div class="card-icon" style="background: rgba(245, 158, 11, 0.12); color: #fcd34d;">📈</div>
+                    <div class="card-body">
+                        <div class="card-title">Grafana — Dashboards</div>
+                        <div class="card-desc">Visualización de métricas del servidor: CPU, RAM, disco, red y salud de servicios.</div>
+                        <div class="card-url">grafana.lab</div>
+                    </div>
+                </a>
+                <a href="http://prometheus.lab" class="service-card">
+                    <div class="card-icon" style="background: rgba(244, 63, 94, 0.12); color: #fda4af;">🔥</div>
+                    <div class="card-body">
+                        <div class="card-title">Prometheus — Métricas</div>
+                        <div class="card-desc">Motor de recolección y almacenamiento de métricas. Scraping cada 15 segundos.</div>
+                        <div class="card-url">prometheus.lab</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Infrastructure -->
+        <div class="category">
+            <div class="category-header">
+                <span class="category-icon">🌐</span>
+                <span class="category-title">Infraestructura de Red</span>
+                <span class="category-count">2 servicios</span>
+            </div>
+            <div class="services-grid">
+                <a href="http://adguard.lab" class="service-card">
+                    <div class="card-icon" style="background: rgba(59, 130, 246, 0.12); color: #93c5fd;">🛡️</div>
+                    <div class="card-body">
+                        <div class="card-title">AdGuard Home — DNS Interno</div>
+                        <div class="card-desc">Resolución de dominios .lab, caché DNS y bloqueo de publicidad/malware.</div>
+                        <div class="card-url">adguard.lab</div>
+                    </div>
+                </a>
+                <a href="http://vpn.lab" class="service-card">
+                    <div class="card-icon" style="background: rgba(99, 102, 241, 0.12); color: #a5b4fc;">🔒</div>
+                    <div class="card-body">
+                        <div class="card-title">WireGuard — VPN</div>
+                        <div class="card-desc">Acceso remoto cifrado a la red interna. Gestión de peers con interfaz web.</div>
+                        <div class="card-url">vpn.lab · UDP: 51820</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>
+                🔒 Sistema Interno — Solo empleados autorizados
+                <span class="separator">|</span>
+                <a href="http://portal.lab" style="color: var(--accent-blue); text-decoration: none;">Portal Público ↗</a>
+            </p>
+            <p style="margin-top: 0.75rem;">
+                Enterprise Lab Platform © 2026
+                <span class="separator">|</span>
+                <span id="clock"></span>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').textContent = now.toLocaleString('es-CO', {
+                weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

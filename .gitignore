@@ -1,0 +1,15 @@
+# Secretos
+.env
+
+# Backups
+/opt/lab-backups/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes (si se montan localmente)
+data/

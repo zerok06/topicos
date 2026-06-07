@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portal Público — Enterprise Lab. Bienvenidos visitantes e invitados.">
+    <title>Portal Público — Enterprise Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #ffffff;
+            --bg-subtle: #f8fafc;
+            --bg-muted: #f1f5f9;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --accent-light: #dbeafe;
+            --emerald: #10b981;
+            --emerald-light: #d1fae5;
+            --purple: #8b5cf6;
+            --purple-light: #ede9fe;
+            --amber: #f59e0b;
+            --amber-light: #fef3c7;
+            --rose: #f43f5e;
+            --border: #e2e8f0;
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Nav */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-brand-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+
+        .nav-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--emerald-light);
+            color: var(--emerald);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .nav-cta {
+            padding: 0.45rem 1.1rem;
+            background: var(--text);
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-cta:hover { background: #1e293b; transform: translateY(-1px); }
+
+        /* Hero */
+        .hero {
+            padding: 9rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 30% 0%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 100%, rgba(139, 92, 246, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-welcome {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.1rem;
+            background: var(--accent-light);
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3.8rem;
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 .line2 {
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 580px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.7;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 0.85rem 2rem;
+            background: var(--accent);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline {
+            padding: 0.85rem 2rem;
+            background: white;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Access info */
+        .access-section {
+            padding: 4rem 2rem;
+            background: var(--bg-subtle);
+        }
+
+        .access-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .access-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .access-header h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+        }
+
+        .access-header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .access-card {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .access-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 40px rgba(59, 130, 246, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .access-card.restricted {
+            border-color: rgba(244, 63, 94, 0.2);
+            background: linear-gradient(135deg, white, rgba(244, 63, 94, 0.02));
+        }
+
+        .access-card.restricted:hover {
+            border-color: var(--rose);
+        }
+
+        .access-card.open {
+            border-color: rgba(16, 185, 129, 0.2);
+            background: linear-gradient(135deg, white, rgba(16, 185, 129, 0.02));
+        }
+
+        .access-card.open:hover {
+            border-color: var(--emerald);
+        }
+
+        .access-icon {
+            width: 56px; height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .access-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .access-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .access-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .tag-open {
+            background: var(--emerald-light);
+            color: var(--emerald);
+        }
+
+        .tag-restricted {
+            background: rgba(244, 63, 94, 0.08);
+            color: var(--rose);
+        }
+
+        .access-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .access-list li {
+            padding: 0.4rem 0;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Info section */
+        .info-section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .info-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .info-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .info-card {
+            padding: 1.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            transition: all 0.3s;
+        }
+
+        .info-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        }
+
+        .info-card-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .info-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* Stats */
+        .stats-section {
+            padding: 3.5rem 2rem;
+            background: var(--bg-muted);
+        }
+
+        .stats-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat h3 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+        }
+
+        .stat p {
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            margin-top: 0.25rem;
+        }
+
+        /* WiFi section */
+        .wifi-section {
+            padding: 4rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .wifi-card {
+            background: linear-gradient(135deg, var(--bg-subtle), rgba(59, 130, 246, 0.03));
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+        }
+
+        .wifi-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .wifi-card p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .wifi-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            text-align: left;
+        }
+
+        .wifi-field label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .wifi-field .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            padding: 0.6rem 1rem;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        footer a { color: var(--accent); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero { padding: 7rem 1.5rem 3rem; }
+            .nav-links { display: none; }
+            .access-grid { grid-template-columns: 1fr; }
+            .wifi-info { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-inner">
+            <a href="#" class="nav-brand">
+                <div class="nav-brand-icon">🏢</div>
+                Enterprise Lab
+            </a>
+            <ul class="nav-links">
+                <li><a href="#acceso">Acceso</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#wifi">WiFi Invitados</a></li>
+                <li><span class="nav-badge">🌐 Acceso Público</span></li>
+            </ul>
+            <a href="http://auth.lab" class="nav-cta">Empleados →</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-welcome">👋 Bienvenido visitante</div>
+            <h1>
+                Portal<br>
+                <span class="line2">Público</span>
+            </h1>
+            <p class="hero-desc">
+                Bienvenido al portal de Enterprise Lab. Este sitio está disponible para
+                todos los visitantes, invitados y dispositivos conectados a nuestra red.
+            </p>
+            <div class="hero-actions">
+                <a href="#acceso" class="btn-primary">
+                    Ver niveles de acceso
+                    <span>↓</span>
+                </a>
+                <a href="#wifi" class="btn-outline">
+                    📶 WiFi para invitados
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Access Levels -->
+    <section class="access-section" id="acceso">
+        <div class="access-inner">
+            <div class="access-header">
+                <h2>Niveles de Acceso</h2>
+                <p>Nuestra plataforma tiene dos niveles de acceso claramente definidos</p>
+            </div>
+            <div class="access-grid">
+                <div class="access-card open">
+                    <div class="access-icon" style="background: var(--emerald-light);">🌐</div>
+                    <h3>Sistema Externo (Público)</h3>
+                    <p>
+                        Accesible para todos los visitantes, invitados y dispositivos
+                        conectados a la red. No requiere autenticación.
+                    </p>
+                    <span class="access-tag tag-open">✅ Acceso libre</span>
+                    <ul class="access-list">
+                        <li>🟢 Este portal (portal.lab)</li>
+                        <li>🟢 Información de la empresa</li>
+                        <li>🟢 WiFi para invitados</li>
+                        <li>🟢 DNS y navegación web</li>
+                    </ul>
+                </div>
+                <div class="access-card restricted">
+                    <div class="access-icon" style="background: rgba(244, 63, 94, 0.08);">🔒</div>
+                    <h3>Sistema Interno (Privado)</h3>
+                    <p>
+                        Exclusivo para empleados autorizados. Requiere autenticación
+                        corporativa a través del sistema SSO (Single Sign-On).
+                    </p>
+                    <span class="access-tag tag-restricted">🚫 Solo empleados</span>
+                    <ul class="access-list">
+                        <li>🔴 Intranet corporativa</li>
+                        <li>🔴 Repositorios de código (Git)</li>
+                        <li>🔴 Dashboards de monitorización</li>
+                        <li>🔴 Gestión de infraestructura</li>
+                        <li>🔴 VPN empresarial</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="info-section" id="servicios">
+        <div class="info-header">
+            <h2>Nuestra Infraestructura</h2>
+            <p style="color: var(--text-secondary);">Tecnología open source de nivel empresarial</p>
+        </div>
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-card-icon" style="background: var(--purple-light);">🔑</div>
+                <h3>Identidad Centralizada</h3>
+                <p>Single Sign-On con autenticación multifactor para máxima seguridad.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon" style="background: var(--emerald-light);">📦</div>
+                <h3>Control de Versiones</h3>
+                <p>Repositorios Git privados con gestión de código y colaboración en equipo.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon" style="background: var(--amber-light);">📊</div>
+                <h3>Monitorización 24/7</h3>
+                <p>Dashboards en tiempo real con métricas de CPU, memoria, red y servicios.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon" style="background: var(--accent-light);">🛡️</div>
+                <h3>DNS Seguro</h3>
+                <p>Resolución DNS interna con bloqueo de publicidad y dominios maliciosos.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon" style="background: rgba(99, 102, 241, 0.1);">🔒</div>
+                <h3>VPN Empresarial</h3>
+                <p>Acceso remoto seguro con cifrado WireGuard de última generación.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon" style="background: rgba(6, 182, 212, 0.1);">🐳</div>
+                <h3>Contenedores</h3>
+                <p>12 servicios en contenedores Docker con alta disponibilidad y persistencia.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats-section">
+        <div class="stats-inner">
+            <div class="stat">
+                <h3>12</h3>
+                <p>Servicios Activos</p>
+            </div>
+            <div class="stat">
+                <h3>100%</h3>
+                <p>Open Source</p>
+            </div>
+            <div class="stat">
+                <h3>24/7</h3>
+                <p>Disponibilidad</p>
+            </div>
+            <div class="stat">
+                <h3>0</h3>
+                <p>Dependencia Cloud</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WiFi Guest -->
+    <section class="wifi-section" id="wifi">
+        <div class="wifi-card">
+            <h2>📶 WiFi para Invitados</h2>
+            <p>Conéctate a nuestra red de invitados para navegar por Internet</p>
+            <div class="wifi-info">
+                <div class="wifi-field">
+                    <label>Red WiFi</label>
+                    <div class="value">Lab-Invitados</div>
+                </div>
+                <div class="wifi-field">
+                    <label>Contraseña</label>
+                    <div class="value">Bienvenido2026</div>
+                </div>
+                <div class="wifi-field">
+                    <label>DNS</label>
+                    <div class="value">192.168.1.100</div>
+                </div>
+                <div class="wifi-field">
+                    <label>Acceso</label>
+                    <div class="value">Solo Internet</div>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.82rem; color: var(--text-muted);">
+                ⓘ La red de invitados solo permite acceso a Internet y a este portal.
+                Los servicios internos no están disponibles desde esta red.
+            </p>
+        </div>
+    </section>
+
+    <footer>
+        <p>Enterprise Lab Platform © 2026 — Ubuntu Server 24.04 LTS — 100% Open Source</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="http://portal.lab">Portal Público</a>
+            <span style="margin: 0 0.5rem; opacity: 0.3;">|</span>
+            <a href="http://auth.lab">Acceso Empleados</a>
+        </p>
+    </footer>
+</body>
+</html>

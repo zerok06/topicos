@@ -1,0 +1,637 @@
+# =============================================================================
+# ENTERPRISE LAB PLATFORM — Docker Compose
+# =============================================================================
+# Ubuntu Server 24.04 LTS | Intel i5-10400F | 16 GB RAM
+# Todas las imágenes con versión fija. Sin :latest.
+# =============================================================================
+
+networks:
+  frontend:
+    name: lab_frontend
+    driver: bridge
+  backend:
+    name: lab_backend
+    driver: bridge
+  monitoring:
+    name: lab_monitoring
+    driver: bridge
+  identity:
+    name: lab_identity
+    driver: bridge
+  vpn:
+    name: lab_vpn
+    driver: bridge
+
+volumes:
+  postgres_data:
+    name: lab_postgres_data
+  keycloak_data:
+    name: lab_keycloak_data
+  gitea_data:
+    name: lab_gitea_data
+  grafana_data:
+    name: lab_grafana_data
+  prometheus_data:
+    name: lab_prometheus_data
+  portainer_data:
+    name: lab_portainer_data
+  adguard_work:
+    name: lab_adguard_work
+  adguard_conf:
+    name: lab_adguard_conf
+  wireguard_data:
+    name: lab_wireguard_data
+  traefik_certs:
+    name: lab_traefik_certs
+
+services:
+  # ===========================================================================
+  # TRAEFIK — Reverse Proxy
+  # ===========================================================================
+  # Decisión: Entrypoint único para todo el tráfico HTTP/HTTPS.
+  # Centraliza routing, simplifica firewall, prepara TLS futuro.
+  # ===========================================================================
+  traefik:
+    image: traefik:${TRAEFIK_VERSION}
+    container_name: lab-traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - traefik_certs:/certs
+    networks:
+      - frontend
+      - identity
+      - monitoring
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.50"
+        reservations:
+          memory: 64M
+    labels:
+      # Dashboard interno de Traefik
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.traefik-dashboard.entrypoints=web"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # ADGUARD HOME — DNS Interno + Bloqueo de Ads
+  # ===========================================================================
+  # Decisión: Resuelve *.lab localmente. Bloquea ads. Cachea DNS.
+  # Upstream externo para cuando haya internet.
+  # ===========================================================================
+  adguard:
+    image: adguard/adguardhome:${ADGUARD_VERSION}
+    container_name: lab-adguard
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "3053:3000/tcp"       # Web UI en puerto 3053 del host (evitar conflicto)
+    volumes:
+      - adguard_work:/opt/adguardhome/work
+      - ./adguard/conf:/opt/adguardhome/conf
+    networks:
+      - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
+        reservations:
+          memory: 64M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adguard.rule=Host(`adguard.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.adguard.entrypoints=web"
+      - "traefik.http.services.adguard.loadbalancer.server.port=3000"
+      - "traefik.docker.network=lab_frontend"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # POSTGRESQL — Base de Datos
+  # ===========================================================================
+  # Decisión: Una sola instancia con múltiples DBs (keycloak, gitea, grafana).
+  # Reduce uso de RAM vs 3 instancias separadas.
+  # ===========================================================================
+  postgres:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: lab-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+      TZ: ${TIMEZONE}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+          cpus: "1.00"
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d postgres"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # KEYCLOAK — Identity Provider (OIDC / OAuth2)
+  # ===========================================================================
+  # Decisión: Modo producción con proxy-headers=xforwarded (detrás de Traefik).
+  # HTTP entre Traefik↔Keycloak; TLS termina en Traefik cuando se habilite.
+  # ===========================================================================
+  keycloak:
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
+    container_name: lab-keycloak
+    restart: unless-stopped
+    command:
+      - start
+      - --http-enabled=true
+      - --hostname-strict=false
+      - --proxy-headers=xforwarded
+      - --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_ADMIN_USER}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: ${KC_DB_URL}
+      KC_DB_USERNAME: ${KC_DB_USERNAME}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+      KC_HTTP_PORT: ${KC_HTTP_PORT}
+      KC_HOSTNAME: ${KC_HOSTNAME}
+      KC_LOG_LEVEL: info
+      TZ: ${TIMEZONE}
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    networks:
+      - backend
+      - identity
+      - frontend
+      - monitoring
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 1536M
+          cpus: "1.00"
+        reservations:
+          memory: 512M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`auth.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.keycloak.entrypoints=web"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+      - "traefik.docker.network=lab_frontend"
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # ===========================================================================
+  # GITEA — Repositorio Git
+  # ===========================================================================
+  # Decisión: Integrado con Keycloak vía OAuth2. PostgreSQL como backend.
+  # SSH en puerto 2222 para no colisionar con el SSH del host.
+  # ===========================================================================
+  gitea:
+    image: gitea/gitea:${GITEA_VERSION}
+    container_name: lab-gitea
+    restart: unless-stopped
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__database__DB_TYPE: ${GITEA_DB_TYPE}
+      GITEA__database__HOST: ${GITEA_DB_HOST}
+      GITEA__database__NAME: ${GITEA_DB_NAME}
+      GITEA__database__USER: ${GITEA_DB_USER}
+      GITEA__database__PASSWD: ${GITEA_DB_PASSWD}
+      GITEA__server__DOMAIN: ${GITEA_DOMAIN}
+      GITEA__server__ROOT_URL: ${GITEA_ROOT_URL}
+      GITEA__server__SSH_PORT: ${GITEA_SSH_PORT}
+      GITEA__server__SSH_LISTEN_PORT: "22"
+      GITEA__server__HTTP_PORT: "3000"
+      GITEA__service__DISABLE_REGISTRATION: "false"
+      GITEA__service__REQUIRE_SIGNIN_VIEW: "true"
+      GITEA__security__SECRET_KEY: ${GITEA_SECRET_KEY}
+      GITEA__security__INTERNAL_TOKEN: ${GITEA_INTERNAL_TOKEN}
+      TZ: ${TIMEZONE}
+    volumes:
+      - gitea_data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "${GITEA_SSH_PORT}:22"
+    networks:
+      - backend
+      - frontend
+      - monitoring
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.50"
+        reservations:
+          memory: 128M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gitea.rule=Host(`git.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.gitea.entrypoints=web"
+      - "traefik.http.services.gitea.loadbalancer.server.port=3000"
+      - "traefik.docker.network=lab_frontend"
+    healthcheck:
+      test: ["CMD", "curl", "-fSs", "http://127.0.0.1:3000/api/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # PORTAINER CE — Gestión Docker
+  # ===========================================================================
+  # Decisión: UI web para gestión visual de contenedores.
+  # Accede al socket Docker como read/write para control total.
+  # ===========================================================================
+  portainer:
+    image: portainer/portainer-ce:${PORTAINER_VERSION}
+    container_name: lab-portainer
+    restart: unless-stopped
+    # Contraseña se configura en el primer acceso vía web UI
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
+        reservations:
+          memory: 64M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.portainer.entrypoints=web"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - "traefik.docker.network=lab_frontend"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:9000/api/system/status"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # PROMETHEUS — Métricas
+  # ===========================================================================
+  # Decisión: Recolecta métricas de todos los servicios instrumentados.
+  # Retención: 15 días o 5GB (lo que ocurra primero).
+  # ===========================================================================
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION}
+    container_name: lab-prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=${PROMETHEUS_RETENTION_TIME}"
+      - "--storage.tsdb.retention.size=${PROMETHEUS_RETENTION_SIZE}"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - monitoring
+      - frontend
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.50"
+        reservations:
+          memory: 128M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.prometheus.entrypoints=web"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      - "traefik.docker.network=lab_frontend"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:9090/-/healthy"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # GRAFANA — Dashboards
+  # ===========================================================================
+  # Decisión: Auto-provisioning de datasources y dashboards.
+  # PostgreSQL como backend para persistencia de configuración.
+  # ===========================================================================
+  grafana:
+    image: grafana/grafana:${GRAFANA_VERSION}
+    container_name: lab-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_SERVER_ROOT_URL: ${GF_SERVER_ROOT_URL}
+      GF_SERVER_DOMAIN: ${GF_SERVER_DOMAIN}
+      GF_DATABASE_TYPE: ${GF_DATABASE_TYPE}
+      GF_DATABASE_HOST: ${GF_DATABASE_HOST}
+      GF_DATABASE_NAME: ${GF_DATABASE_NAME}
+      GF_DATABASE_USER: ${GF_DATABASE_USER}
+      GF_DATABASE_PASSWORD: ${GF_DATABASE_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_LOG_MODE: console
+      GF_LOG_LEVEL: info
+      TZ: ${TIMEZONE}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - monitoring
+      - backend
+      - frontend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.50"
+        reservations:
+          memory: 128M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.grafana.entrypoints=web"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.docker.network=lab_frontend"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # NODE EXPORTER — Métricas del Host
+  # ===========================================================================
+  # Decisión: Corre con acceso al filesystem del host (read-only).
+  # pid=host para métricas de procesos precisas.
+  # ===========================================================================
+  node-exporter:
+    image: prom/node-exporter:${NODE_EXPORTER_VERSION}
+    container_name: lab-node-exporter
+    restart: unless-stopped
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.rootfs=/rootfs"
+      - "--path.sysfs=/host/sys"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    pid: host
+    networks:
+      - monitoring
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.25"
+        reservations:
+          memory: 32M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:9100/metrics"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ===========================================================================
+  # WIREGUARD (wg-easy) — VPN
+  # ===========================================================================
+  # Decisión: wg-easy incluye UI web para gestión de peers sin CLI.
+  # Requiere NET_ADMIN y SYS_MODULE para crear interfaces de red.
+  # ===========================================================================
+  wireguard:
+    image: ghcr.io/wg-easy/wg-easy:${WGEASY_VERSION}
+    container_name: lab-wireguard
+    restart: unless-stopped
+    environment:
+      LANGUAGE: es
+      WG_HOST: ${WG_HOST}
+      PORT: "51821"
+      WG_PORT: ${WG_PORT}
+      WG_DEFAULT_DNS: ${WG_DEFAULT_DNS}
+      WG_DEFAULT_ADDRESS: ${WG_DEFAULT_ADDRESS}
+      WG_ALLOWED_IPS: ${WG_ALLOWED_IPS}
+      PASSWORD_HASH: ${WGEASY_PASSWORD_HASH}
+    volumes:
+      - wireguard_data:/etc/wireguard
+    ports:
+      - "${WG_PORT}:${WG_PORT}/udp"
+      - "51821:51821/tcp"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.src_valid_mark=1
+    networks:
+      - vpn
+      - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.25"
+        reservations:
+          memory: 32M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wireguard.rule=Host(`vpn.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.wireguard.entrypoints=web"
+      - "traefik.http.services.wireguard.loadbalancer.server.port=51821"
+      - "traefik.docker.network=lab_frontend"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:51821"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # INTRANET — Aplicación Interna (protegida)
+  # ===========================================================================
+  # Decisión: Nginx estático con página de intranet corporativa.
+  # Futuro: proteger con Keycloak OAuth2 Proxy.
+  # ===========================================================================
+  intranet:
+    image: nginx:${NGINX_VERSION}
+    container_name: lab-intranet
+    restart: unless-stopped
+    volumes:
+      - ./intranet/html:/usr/share/nginx/html:ro
+    networks:
+      - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: "0.10"
+        reservations:
+          memory: 16M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.intranet.rule=Host(`intranet.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.intranet.entrypoints=web"
+      - "traefik.http.services.intranet.loadbalancer.server.port=80"
+      - "traefik.docker.network=lab_frontend"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ===========================================================================
+  # PORTAL — Aplicación Pública
+  # ===========================================================================
+  # Decisión: Nginx estático con portal público de ejemplo.
+  # Accesible sin autenticación.
+  # ===========================================================================
+  portal:
+    image: nginx:${NGINX_VERSION}
+    container_name: lab-portal
+    restart: unless-stopped
+    volumes:
+      - ./portal/html:/usr/share/nginx/html:ro
+    networks:
+      - frontend
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: "0.10"
+        reservations:
+          memory: 16M
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portal.rule=Host(`portal.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.portal.entrypoints=web"
+      - "traefik.http.services.portal.loadbalancer.server.port=80"
+      - "traefik.docker.network=lab_frontend"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"

@@ -1,0 +1,76 @@
+# =============================================================================
+# TRAEFIK — Configuración Estática
+# =============================================================================
+# Decisión: Archivo estático YAML en vez de CLI flags para legibilidad.
+# Docker provider con autodiscovery por labels.
+# =============================================================================
+
+# API y Dashboard
+api:
+  dashboard: true
+  insecure: true       # Solo para lab interno; en producción usar auth middleware
+
+# Entrypoints
+entryPoints:
+  web:
+    address: ":80"
+    # Preparado para redirección HTTPS futura:
+    # http:
+    #   redirections:
+    #     entryPoint:
+    #       to: websecure
+    #       scheme: https
+
+  websecure:
+    address: ":443"
+    # Preparado para TLS futuro:
+    # http:
+    #   tls:
+    #     certResolver: letsencrypt
+
+# Provider Docker
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: lab_frontend
+    watch: true
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+# Logging
+log:
+  level: INFO
+  format: common
+
+accessLog:
+  format: common
+  filePath: ""          # stdout
+  bufferingSize: 100
+
+# Métricas para Prometheus
+metrics:
+  prometheus:
+    entryPoint: web
+    addEntryPointsLabels: true
+    addServicesLabels: true
+    addRoutersLabels: true
+    buckets:
+      - 0.1
+      - 0.3
+      - 1.2
+      - 5.0
+
+# Healthcheck / Ping
+ping:
+  entryPoint: web
+
+# Preparado para certificados TLS futuros (Let's Encrypt)
+# certificatesResolvers:
+#   letsencrypt:
+#     acme:
+#       email: admin@example.com
+#       storage: /certs/acme.json
+#       httpChallenge:
+#         entryPoint: web

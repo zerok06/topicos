@@ -1,0 +1,74 @@
+# =============================================================================
+# PROMETHEUS — Configuración de Scraping
+# =============================================================================
+# Recolecta métricas de todos los servicios instrumentados.
+# Intervalo: 15s | Retención: configurada vía CLI flags.
+# =============================================================================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+# Reglas de alerta (preparado para expansión futura)
+# rule_files:
+#   - "rules/*.yml"
+
+scrape_configs:
+  # -----------------------------------------------------------------
+  # Prometheus Self-Monitoring
+  # -----------------------------------------------------------------
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["prometheus:9090"]
+        labels:
+          instance: "prometheus"
+
+  # -----------------------------------------------------------------
+  # Node Exporter — Métricas del Host
+  # -----------------------------------------------------------------
+  - job_name: "node-exporter"
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels:
+          instance: "ubuntu-server"
+
+  # -----------------------------------------------------------------
+  # Traefik — Métricas del Reverse Proxy
+  # -----------------------------------------------------------------
+  - job_name: "traefik"
+    static_configs:
+      - targets: ["traefik:80"]
+        labels:
+          instance: "traefik"
+    metrics_path: /metrics
+
+  # -----------------------------------------------------------------
+  # Keycloak — Métricas del Identity Provider
+  # -----------------------------------------------------------------
+  - job_name: "keycloak"
+    static_configs:
+      - targets: ["keycloak:8080"]
+        labels:
+          instance: "keycloak"
+    metrics_path: /metrics
+
+  # -----------------------------------------------------------------
+  # Gitea — Métricas del repositorio Git
+  # -----------------------------------------------------------------
+  - job_name: "gitea"
+    static_configs:
+      - targets: ["gitea:3000"]
+        labels:
+          instance: "gitea"
+    metrics_path: /metrics
+
+  # -----------------------------------------------------------------
+  # Grafana — Métricas de los dashboards
+  # -----------------------------------------------------------------
+  - job_name: "grafana"
+    static_configs:
+      - targets: ["grafana:3000"]
+        labels:
+          instance: "grafana"
+    metrics_path: /metrics

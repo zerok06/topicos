@@ -1,0 +1,49 @@
+# =============================================================================
+# TRAEFIK — Middlewares Dinámicos
+# =============================================================================
+# Cargados automáticamente vía file provider con watch: true
+# =============================================================================
+
+http:
+  middlewares:
+    # -----------------------------------------------------------------
+    # Headers de seguridad globales
+    # -----------------------------------------------------------------
+    security-headers:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+        frameDeny: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+        customFrameOptionsValue: "SAMEORIGIN"
+        customResponseHeaders:
+          X-Powered-By: ""
+          Server: ""
+
+    # -----------------------------------------------------------------
+    # Rate limiting (protección contra abuso)
+    # -----------------------------------------------------------------
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 200
+        period: 1m
+
+    # -----------------------------------------------------------------
+    # Compresión gzip
+    # -----------------------------------------------------------------
+    compress:
+      compress:
+        excludedContentTypes:
+          - text/event-stream
+
+    # -----------------------------------------------------------------
+    # Cadena de middlewares por defecto
+    # -----------------------------------------------------------------
+    default-chain:
+      chain:
+        middlewares:
+          - security-headers
+          - compress
