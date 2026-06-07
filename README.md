@@ -121,52 +121,66 @@ sudo cp -r . /opt/lab-platform/
 cd /opt/lab-platform
 ```
 
-### Paso 4: Configurar Variables de Entorno
+### Paso 4: Configurar el Entorno (Recomendado)
+
+Recomendamos utilizar el script de configuración automática para preparar el archivo `.env` y asegurar todos los permisos en un solo comando:
 
 ```bash
-# Copiar ejemplo y editar
-cp .env.example .env
-nano .env
+# Dar permisos de ejecución
+chmod +x setup.sh
+
+# Ejecutar el asistente de configuración
+sudo ./setup.sh
 ```
 
-**Variables críticas a cambiar:**
+**Este script se encarga de:**
+1. Autodetectar la dirección IP local primaria de tu servidor.
+2. Copiar `.env.example` a `.env` de forma segura.
+3. Ofrecerte autogenerar contraseñas aleatorias seguras o escribir las tuyas.
+4. Generar automáticamente los hashes Bcrypt de las contraseñas de AdGuard y WireGuard (escapando el carácter `$` a `$$` para evitar fallos en Docker Compose).
+5. Asignar los permisos ejecutables correctos a todos los scripts del sistema (`backups/scripts/*.sh` y `postgres/*.sh`).
 
-| Variable | Descripción |
-|---|---|
-| `SERVER_IP` | IP estática del servidor (ej: 192.168.1.100) |
-| `POSTGRES_PASSWORD` | Contraseña de PostgreSQL |
-| `KC_ADMIN_PASSWORD` | Contraseña admin de Keycloak |
-| `GF_SECURITY_ADMIN_PASSWORD` | Contraseña admin de Grafana |
-| `WGEASY_PASSWORD_HASH` | Hash bcrypt para WireGuard UI |
-| `WG_HOST` | IP del servidor (misma que SERVER_IP) |
+---
 
-**Generar hash para WireGuard:**
-```bash
-docker run -it ghcr.io/wg-easy/wg-easy wgpw 'TU_PASSWORD_SEGURA'
-# Copiar el resultado al .env como WGEASY_PASSWORD_HASH
-# ⚠️ Duplicar cada $ → $$ en el .env
-```
+#### Opción Alternativa: Configuración Manual
 
-### Paso 5: Configurar AdGuard Home
+Si prefieres realizar el aprovisionamiento de variables a mano:
 
-Editar `adguard/conf/AdGuardHome.yaml` y reemplazar `192.168.1.100` con tu IP real en todas las líneas de `answer:`.
+1. **Copiar y Editar el archivo de entorno:**
 
-**Generar hash de contraseña para AdGuard:**
-```bash
-sudo apt install -y apache2-utils
-htpasswd -nbB admin 'TU_PASSWORD' | cut -d: -f2
-# Copiar el resultado al archivo AdGuardHome.yaml y al .env
-```
+   ```bash
+   cp .env.example .env
+   nano .env
+   ```
 
-### Paso 6: Hacer scripts ejecutables
+   *Modifica variables críticas: `SERVER_IP`, `POSTGRES_PASSWORD`, `KC_ADMIN_PASSWORD`, `GF_SECURITY_ADMIN_PASSWORD`, `WG_HOST`.*
 
-```bash
-chmod +x backups/scripts/backup.sh
-chmod +x backups/scripts/restore.sh
-chmod +x postgres/init-databases.sh
-```
+2. **Generar hash para WireGuard:**
 
-### Paso 7: Desplegar la Plataforma
+   ```bash
+   docker run --rm ghcr.io/wg-easy/wg-easy wgpw 'TU_PASSWORD'
+   ```
+
+   *Duplicar cada '$' por '$$' al pegarlo en `WGEASY_PASSWORD_HASH` en el `.env`.*
+
+3. **Generar hash de contraseña para AdGuard:**
+
+   ```bash
+   sudo apt install -y apache2-utils
+   htpasswd -nbB admin 'TU_PASSWORD' | cut -d: -f2
+   ```
+
+   *Pegar en `ADGUARD_PASSWORD_HASH` en el `.env`.*
+
+4. **Hacer scripts ejecutables:**
+
+   ```bash
+   chmod +x backups/scripts/backup.sh
+   chmod +x backups/scripts/restore.sh
+   chmod +x postgres/init-databases.sh
+   ```
+
+### Paso 5: Desplegar la Plataforma
 
 ```bash
 # Levantar todo (primera vez descarga imágenes ~3-5 GB)
