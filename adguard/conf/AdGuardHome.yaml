@@ -94,28 +94,28 @@ filtering:
     # DNS REWRITES — Dominios .nike.com → IP del servidor
     # =========================================================================
     - domain: auth.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     - domain: git.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     - domain: grafana.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     - domain: prometheus.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     - domain: portainer.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     - domain: intranet.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     - domain: portal.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     - domain: adguard.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     - domain: traefik.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     - domain: vpn.nike.com
-      answer: 192.168.1.100
+      answer: 192.168.2.102
     # Wildcard para futuros subdominios
     - domain: "*.nike.com"
-      answer: 192.168.1.100
+      answer: 192.168.2.102
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576
   parental_cache_size: 1048576

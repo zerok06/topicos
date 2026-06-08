@@ -55,7 +55,7 @@ if [ -z "$IP_DETECTED" ]; then
     IP_DETECTED=$(hostname -I | awk '{print $1}' || true)
 fi
 if [ -z "$IP_DETECTED" ]; then
-    IP_DETECTED="192.168.2.101"
+    IP_DETECTED="192.168.2.102"
 fi
 
 read -p "Confirma la IP de este servidor (Por defecto: $IP_DETECTED): " IP_CONFIRMED
@@ -104,7 +104,7 @@ GF_PASS=$(openssl rand -base64 16 | tr -d '/+=')
 PT_PASS=$(openssl rand -base64 16 | tr -d '/+=')
 GITEA_KEY=$(openssl rand -hex 16)
 GITEA_TOKEN="eyJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTcxMjAwMDB9.$(openssl rand -hex 12)"
-INTRANET_COOKIE=$(openssl rand -base64 32)
+INTRANET_COOKIE=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')
 
 
 # 6. Instalar apache2-utils si no está para generar hashes bcrypt

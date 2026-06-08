@@ -23,7 +23,7 @@ success_msg() { echo -e "${GREEN}[ÉXITO]${NC} $1"; }
 warn_msg() { echo -e "${YELLOW}[ADVERTENCIA]${NC} $1"; }
 error_msg() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-TARGET_IP="192.168.2.101"
+TARGET_IP="192.168.2.102"
 
 echo -e "${YELLOW}=================================================================${NC}"
 echo -e "${YELLOW}       SCRIPT DE REPARACIÓN DE RED, RESOLVED, SSH Y UFW          ${NC}"
