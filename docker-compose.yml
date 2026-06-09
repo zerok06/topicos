@@ -64,10 +64,12 @@ services:
       - ./traefik/dynamic:/etc/traefik/dynamic:ro
       - traefik_certs:/certs
     networks:
-      - frontend
-      - identity
-      - monitoring
-      - backend
+      frontend:
+        aliases:
+          - auth.nike.com
+      identity:
+      monitoring:
+      backend:
     deploy:
       resources:
         limits:
@@ -189,7 +191,8 @@ services:
     command:
       - start
       - --http-enabled=true
-      - --hostname-strict=false
+      - --hostname-strict=true
+      - --hostname-backchannel-dynamic=true
       - --proxy-headers=xforwarded
       - --import-realm
     environment:
@@ -605,6 +608,8 @@ services:
       OAUTH2_PROXY_CLIENT_ID: intranet
       OAUTH2_PROXY_CLIENT_SECRET: ${INTRANET_CLIENT_SECRET}
       OAUTH2_PROXY_COOKIE_SECRET: ${INTRANET_COOKIE_SECRET}
+      OAUTH2_PROXY_SKIP_OIDC_DISCOVERY: "true"
+      OAUTH2_PROXY_COOKIE_SECURE: "false"
       OAUTH2_PROXY_OIDC_ISSUER_URL: http://keycloak:8080/realms/nike
       OAUTH2_PROXY_LOGIN_URL: http://auth.${DOMAIN_SUFFIX}/realms/nike/protocol/openid-connect/auth
       OAUTH2_PROXY_REDEEM_URL: http://keycloak:8080/realms/nike/protocol/openid-connect/token

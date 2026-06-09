@@ -361,12 +361,12 @@ RESUMEN DE CREDENCIALES CONFIGURADAS
 =================================================================
 IP del Servidor: 192.168.2.102
 PostgreSQL User: nikeadmin
-PostgreSQL Pass: 6xq4whcwVz5q2W5MRQvZA
-Keycloak Admin Pass: nlaaxghROSaNGkvrdHMUng
-Grafana Admin Pass: 93b7noPDk8e7cfMH8wJ8PQ
-Portainer Admin Pass: DPbQf9BlGrTdoFTrAxgBQg
+PostgreSQL Pass: XeipEhz2JOAYXMmEnOz1CA
+Keycloak Admin Pass: 0RTrjS1GrkNmQgXfUiNyA
+Grafana Admin Pass: NXA0af3S3A9z5kfXFspOw
+Portainer Admin Pass: X4ZSal8NOYhN7rcduxbyAw
 AdGuard Home User: admin
-AdGuard Home Pass: NFRIc0f1H2ntKECW
-WireGuard VPN Pass: n6igQQ8rnsMyROUC
+AdGuard Home Pass: oPTdwAbrzW3maWX
+WireGuard VPN Pass: Ksyi1LwSEvntIccR
 Gitea User: gitadmin
 Gitea Pass: 3h4DdHIrG4Wd8fyY
