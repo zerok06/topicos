@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { Truck, Activity } from 'lucide-react'
-import { Card } from '../ui/Card'
+import { Card } from '../ui/card'
 import { ChartSkeleton } from '../metrics/MetricCardSkeleton'
 import { metricsService } from '../../services/metrics.service'
 import type { ShipmentStats } from '../../types/metrics'

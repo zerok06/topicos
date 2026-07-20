@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { Activity, Calendar } from 'lucide-react'
-import { Card } from '../ui/Card'
+import { Card } from '../ui/card'
 import { ChartSkeleton } from '../metrics/MetricCardSkeleton'
 import { metricsService } from '../../services/metrics.service'
 import type { MovementTrend } from '../../types/metrics'

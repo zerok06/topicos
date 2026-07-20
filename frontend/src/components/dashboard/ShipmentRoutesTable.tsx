@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { MapPin, Navigation, Compass, Truck } from 'lucide-react'
-import { Card } from '../ui/Card'
+import { Card } from '../ui/card'
 import { metricsService } from '../../services/metrics.service'
 import type { ShipmentStats } from '../../types/metrics'
 import { Loader } from '../ui/Loader'

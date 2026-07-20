@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Warehouse, AlertCircle } from 'lucide-react'
-import { Card } from '../ui/Card'
+import { Card } from '../ui/card'
 import { Progress } from '../ui/progress'
 import { metricsService } from '../../services/metrics.service'
 import type { WarehousePerformance } from '../../types/metrics'

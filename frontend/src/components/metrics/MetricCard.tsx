@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Card } from '../ui/Card'
+import { Card } from '../ui/card'
 import { cn } from '../../lib/utils'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { AnimatedCounter } from './AnimatedCounter'

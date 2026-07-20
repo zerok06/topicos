@@ -113,6 +113,8 @@ filtering:
       answer: 192.168.2.102
     - domain: vpn.nike.com
       answer: 192.168.2.102
+    - domain: api.nike.com
+      answer: 192.168.2.102
     # Wildcard para futuros subdominios
     - domain: "*.nike.com"
       answer: 192.168.2.102
