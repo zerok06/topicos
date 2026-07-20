@@ -841,25 +841,19 @@ services:
         max-file: "3"
 
   # ---------------------------------------------------------------------------
-  # FRONTEND — React + Vite (reemplaza intranet)
+  # FRONTEND — React + Vite (nginx build, sirve en intranet.nike.com)
   # ---------------------------------------------------------------------------
   frontend:
     build:
       context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://intranet.${DOMAIN_SUFFIX}/api/v1
+        VITE_KEYCLOAK_ENABLED: ${VITE_KEYCLOAK_ENABLED}
+        VITE_KEYCLOAK_URL: http://auth.${DOMAIN_SUFFIX}
+        VITE_KEYCLOAK_REALM: ${VITE_KEYCLOAK_REALM}
+        VITE_KEYCLOAK_CLIENT_ID: ${VITE_KEYCLOAK_CLIENT_ID}
     container_name: nike-intranet
     restart: unless-stopped
-    environment:
-      - VITE_API_BASE_URL=http://intranet.${DOMAIN_SUFFIX}/api/v1
-      - VITE_PROXY_TARGET=http://backend:8000
-      - VITE_KEYCLOAK_ENABLED=${VITE_KEYCLOAK_ENABLED}
-      - VITE_KEYCLOAK_URL=http://auth.${DOMAIN_SUFFIX}
-      - VITE_KEYCLOAK_REALM=${VITE_KEYCLOAK_REALM}
-      - VITE_KEYCLOAK_CLIENT_ID=${VITE_KEYCLOAK_CLIENT_ID}
-    volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/public:/app/public
-      - ./frontend/index.html:/app/index.html
-      - ./frontend/vite.config.ts:/app/vite.config.ts
     networks:
       - frontend
       - nike_logistica
@@ -869,21 +863,21 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.intranet.rule=Host(`intranet.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.intranet.entrypoints=web"
-      - "traefik.http.services.intranet.loadbalancer.server.port=5173"
+      - "traefik.http.services.intranet.loadbalancer.server.port=80"
       - "traefik.docker.network=nike_frontend"
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: "0.50"
-        reservations:
           memory: 128M
+          cpus: "0.25"
+        reservations:
+          memory: 64M
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:5173"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:80"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 30s
+      start_period: 10s
     logging:
       driver: "json-file"
       options:
