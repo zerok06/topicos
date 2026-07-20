@@ -372,9 +372,9 @@ Gitea User: gitadmin
 Gitea Pass: 3h4DdHIrG4Wd8fyY
 
 IP del Servidor: 192.168.2.102
-PostgreSQL: nikeadmin / N1AgFv4gd9T7XL0DrnGg
-Keycloak Admin: admin / G1GjNAfTwAEDMNfTBaqLg
-Grafana Admin: admin / Nd9Hl6Dkqudn8hZjg47yjg
-Portainer Admin: admin / jieKEwggzv1zyb2HT7E9g
-AdGuard Home: admin / Cg381sRsTndHutA
-WireGuard VPN: admin / vLYh3C6XKBd0OVth
+PostgreSQL: nikeadmin / dI75bBAZprAtYAgeOuXORA
+Keycloak Admin: admin / A8TeMV7cP3akeKhEdOIUVg
+Grafana Admin: admin / h33YausOfRGD1ckmyfOOg
+Portainer Admin: admin / 6YKHxpcTjglzdUU6p9REA
+AdGuard Home: admin / 6KYgmQmyXwseaGI
+WireGuard VPN: admin / KizCDwt9WPX05l55
