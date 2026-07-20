@@ -1,0 +1,83 @@
+<mxfile host="Electron" modified="2026-07-09T00:00:00.000Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64)" version="20.0.0" type="device">
+  <diagram id="NikeLogisticaArch" name="Arquitectura Plataforma Nike">
+    <mxGraphModel dx="1000" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Usuario -->
+        <mxCell id="usuario" value="Usuario Logístico / Planificador" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="60" y="270" width="30" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Frontend -->
+        <mxCell id="frontend" value="Frontend (React + Vite + shadcn/ui)&#xa;- Capa de Componentes&#xa;- Capa de Características (Features)&#xa;- Capa de Servicios (Peticiones HTTP/WS)&#xa;- Estado (Zustand &amp; Widget de Roles)" style="shape=component;align=left;spacingLeft=36;html=1;" vertex="1" parent="1">
+          <mxGeometry x="170" y="230" width="220" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- Keycloak -->
+        <mxCell id="keycloak" value="Keycloak IAM&#xa;(AuthN / AuthZ)" style="shape=module;align=left;spacingLeft=20;html=1;" vertex="1" parent="1">
+          <mxGeometry x="340" y="50" width="160" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Backend -->
+        <mxCell id="backend" value="Backend (FastAPI)&#xa;- Capa de Entrada (APIs / Controllers)&#xa;- Capa de Negocio (Services)&#xa;- Capa de Acceso a Datos (Repositories)&#xa;- Client para API Groq" style="shape=component;align=left;spacingLeft=36;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="230" width="240" height="140" as="geometry" />
+        </mxCell>
+        
+        <!-- Base de datos -->
+        <mxCell id="database" value="Base de Datos&#xa;PostgreSQL + pgvector&#xa;(Inventario, Tracking, Embeddings)" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=15;html=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="400" y="450" width="180" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- Groq API -->
+        <mxCell id="groq_api" value="Groq API&#xa;(Modelos Llama3 / Gemma)&#xa;- Procesamiento LLM rápido" style="shape=cloud;align=center;html=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="450" width="180" height="100" as="geometry" />
+        </mxCell>
+        
+        <!-- Comunicaciones -->
+        <mxCell id="link1" value="Interacción / Drag-and-Drop" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;rounded=0;" edge="1" parent="1" source="usuario" target="frontend">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="90" y="300" as="sourcePoint" />
+            <mxPoint x="170" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="link2" value="REST / WebSockets" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;" edge="1" parent="1" source="frontend" target="backend">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="390" y="300" as="sourcePoint" />
+            <mxPoint x="470" y="300" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="link3" value="Flujo de Autenticación" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;dashed=1;" edge="1" parent="1" source="frontend" target="keycloak">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="280" y="230" as="sourcePoint" />
+            <mxPoint x="340" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="link4" value="Validación de Token JWT" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;dashed=1;" edge="1" parent="1" source="backend" target="keycloak">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="590" y="230" as="sourcePoint" />
+            <mxPoint x="480" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="link5" value="SQL / Vector Queries (pgvector)" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;" edge="1" parent="1" source="backend" target="database">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="590" y="370" as="sourcePoint" />
+            <mxPoint x="490" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="link6" value="Inferencia de Chatbot / NLP" style="html=1;verticalAlign=bottom;endArrow=block;rounded=0;" edge="1" parent="1" source="backend" target="groq_api">
+          <mxGeometry width="80" relative="1" as="geometry">
+            <mxPoint x="650" y="370" as="sourcePoint" />
+            <mxPoint x="730" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

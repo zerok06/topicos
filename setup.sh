@@ -104,7 +104,7 @@ GF_PASS=$(openssl rand -base64 16 | tr -d '/+=')
 PT_PASS=$(openssl rand -base64 16 | tr -d '/+=')
 GITEA_KEY=$(openssl rand -hex 16)
 GITEA_TOKEN="eyJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MTcxMjAwMDB9.$(openssl rand -hex 12)"
-INTRANET_COOKIE=$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')
+
 
 
 # 6. Instalar apache2-utils si no está para generar hashes bcrypt
@@ -156,10 +156,6 @@ sed -i "s|PORTAINER_ADMIN_PASSWORD=.*|PORTAINER_ADMIN_PASSWORD=$PT_PASS|g" .env
 sed -i "s|ADGUARD_PASSWORD_HASH=.*|ADGUARD_PASSWORD_HASH=$ADGUARD_ESCAPED_HASH|g" .env
 sed -i "s|WG_PASSWORD=.*|WG_PASSWORD=$WG_PASS|g" .env
 
-# Intranet OAuth2 Proxy
-sed -i "s|INTRANET_COOKIE_SECRET=.*|INTRANET_COOKIE_SECRET=$INTRANET_COOKIE|g" .env
-
-
 # Actualizar el archivo AdGuardHome.yaml físico si existe
 if [ -f adguard/conf/AdGuardHome.yaml ]; then
     info_msg "Actualizando archivo de configuración física de AdGuard Home..."
@@ -182,14 +178,12 @@ echo -e "\n${YELLOW}============================================================
 echo -e "${GREEN}          RESUMEN DE CREDENCIALES CONFIGURADAS                   ${NC}"
 echo -e "${YELLOW}=================================================================${NC}"
 echo -e "IP del Servidor:       ${GREEN}$IP_CONFIRMED${NC}"
-echo -e "PostgreSQL User:       ${GREEN}nikeadmin${NC}"
-echo -e "PostgreSQL Pass:       ${GREEN}$PG_PASS${NC}"
-echo -e "Keycloak Admin Pass:   ${GREEN}$KC_PASS${NC}"
-echo -e "Grafana Admin Pass:    ${GREEN}$GF_PASS${NC}"
-echo -e "Portainer Admin Pass:  ${GREEN}$PT_PASS${NC}"
-echo -e "AdGuard Home User:     ${GREEN}admin${NC}"
-echo -e "AdGuard Home Pass:     ${GREEN}$ADGUARD_PASS${NC}"
-echo -e "WireGuard VPN Pass:    ${GREEN}$WG_PASS${NC}"
+echo -e "PostgreSQL:            ${GREEN}nikeadmin / $PG_PASS${NC}"
+echo -e "Keycloak Admin:        ${GREEN}admin / $KC_PASS${NC}"
+echo -e "Grafana Admin:         ${GREEN}admin / $GF_PASS${NC}"
+echo -e "Portainer Admin:       ${GREEN}admin / $PT_PASS${NC}"
+echo -e "AdGuard Home:          ${GREEN}admin / $ADGUARD_PASS${NC}"
+echo -e "WireGuard VPN:         ${GREEN}admin / $WG_PASS${NC}"
 echo -e "${YELLOW}=================================================================${NC}"
 warn_msg "Copia y guarda estas contraseñas en un lugar seguro."
 warn_msg "El archivo '.env' contiene estas credenciales y está protegido en tu host local."

@@ -1,0 +1,55 @@
+﻿
+> nike-logistica-frontend@0.1.0 build
+> tsc && vite build
+
+src/components/dashboard/AlertsPanel.tsx(4,23): error TS1261: Already included file name 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/ui/badge.tsx' differs from file name 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/ui/Badge.tsx' only in casing.
+  The file is in the program because:
+    Imported via '../ui/badge' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/dashboard/AlertsPanel.tsx'
+    Imported via '../../components/ui/badge' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/InventoryPage.tsx'
+    Imported via '../../components/ui/badge' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/TrackingPage.tsx'
+    Imported via '../../components/ui/badge' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/ProductsPage.tsx'
+    Imported via '../../components/ui/badge' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/ProductDetailPage.tsx'
+    Imported via '../../components/ui/badge' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/AuditPage.tsx'
+    Imported via '../../components/ui/badge' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/UsersPage.tsx'
+    Imported via '../../components/ui/badge' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/SettingsPage.tsx'
+    Matched by include pattern 'src' in 'D:/FRONT2/agentes-nike-logistica/frontend/tsconfig.json'
+src/components/metrics/MetricCard.tsx(3,22): error TS1261: Already included file name 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/ui/card.tsx' differs from file name 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/ui/Card.tsx' only in casing.
+  The file is in the program because:
+    Imported via '../ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/metrics/MetricCard.tsx'
+    Imported via '../ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/dashboard/TrendChart.tsx'
+    Imported via '../ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/dashboard/StockChart.tsx'
+    Imported via '../ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/dashboard/AlertsPanel.tsx'
+    Imported via '../ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/dashboard/ShipmentDonut.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/InventoryPage.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/TrackingPage.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/ChatbotPage.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/ProductRegistrationPage.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/ProductsPage.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/ProductDetailPage.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/ProductEditPage.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/AuditPage.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/UsersPage.tsx'
+    Imported via '../../components/ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/SettingsPage.tsx'
+    Imported via '../ui/card' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/metrics/ChartContainer.tsx'
+    Matched by include pattern 'src' in 'D:/FRONT2/agentes-nike-logistica/frontend/tsconfig.json'
+src/pages/auth/LoginPage.tsx(9,24): error TS1261: Already included file name 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/ui/button.tsx' differs from file name 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/ui/Button.tsx' only in casing.
+  The file is in the program because:
+    Imported via '../../components/ui/button' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/auth/LoginPage.tsx'
+    Imported via '../../components/ui/button' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/auth/RegisterPage.tsx'
+    Imported via '../../components/ui/button' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/InventoryPage.tsx'
+    Imported via '../../components/ui/button' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/TrackingPage.tsx'
+    Imported via '../../components/ui/button' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/ChatbotPage.tsx'
+    Imported via './ui/button' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/BarcodeScanner.tsx'
+    Imported via '../../components/ui/button' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/UsersPage.tsx'
+    Imported via '../../components/ui/button' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/SettingsPage.tsx'
+    Imported via '../ui/button' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/metrics/ExportButton.tsx'
+    Matched by include pattern 'src' in 'D:/FRONT2/agentes-nike-logistica/frontend/tsconfig.json'
+src/pages/auth/LoginPage.tsx(10,23): error TS1261: Already included file name 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/ui/input.tsx' differs from file name 'D:/FRONT2/agentes-nike-logistica/frontend/src/components/ui/Input.tsx' only in casing.
+  The file is in the program because:
+    Imported via '../../components/ui/input' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/auth/LoginPage.tsx'
+    Imported via '../../components/ui/input' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/auth/RegisterPage.tsx'
+    Imported via '../../components/ui/input' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/InventoryPage.tsx'
+    Imported via '../../components/ui/input' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/AuditPage.tsx'
+    Imported via '../../components/ui/input' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/UsersPage.tsx'
+    Imported via '../../components/ui/input' from file 'D:/FRONT2/agentes-nike-logistica/frontend/src/pages/dashboard/SettingsPage.tsx'
+    Matched by include pattern 'src' in 'D:/FRONT2/agentes-nike-logistica/frontend/tsconfig.json'

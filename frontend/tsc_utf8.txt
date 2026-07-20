@@ -1,0 +1,17 @@
+﻿src/components/dashboard/AlertsPanel.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/dashboard/DashboardFilterBar.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/dashboard/KpiGrid.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/dashboard/ShipmentDonut.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/dashboard/StockChart.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/dashboard/TrendChart.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/metrics/AnimatedCounter.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/metrics/MetricCard.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/metrics/MetricCardSkeleton.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/metrics/Sparkline.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/metrics/TimeRangeSelector.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/components/ui/badge.tsx(4,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
+src/components/ui/card.tsx(3,20): error TS2307: Cannot find module '@/lib/utils' or its corresponding type declarations.
+src/context/DashboardFilterContext.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/pages/dashboard/DashboardPage.tsx(1,8): error TS1259: Module '"D:/FRONT2/agentes-nike-logistica/frontend/node_modules/@types/react/index"' can only be default-imported using the 'allowSyntheticDefaultImports' flag
+src/services/api.ts(3,22): error TS1343: The 'import.meta' meta-property is only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', 'node20', or 'nodenext'.
+src/services/api.ts(3,34): error TS2339: Property 'env' does not exist on type 'ImportMeta'.

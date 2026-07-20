@@ -1,0 +1,124 @@
+-- ============================================================
+-- agentes_nike_logistica_bd.sql  —  PUNTO DE ENTRADA
+-- Sistema de Agentes de Inteligencia Logística Nike
+-- Motor: PostgreSQL 14+ con pgvector
+--
+-- INSTRUCCIONES DE EJECUCIÓN COMPLETA:
+-- ============================================================
+--
+-- Opción A — psql (una sola sesión):
+--   psql -U postgres -d nike_logistica_db \
+--     -f db/01_platform_central.sql \
+--     -f db/02_sede_nike_peru.sql \
+--     -f db/03_retail_distribuidoras.sql \
+--     -f db/04_proveedores_fabricas.sql
+--
+-- Opción B — psql interactivo (ejecutar desde /db/):
+--   \i 01_platform_central.sql
+--   \i 02_sede_nike_peru.sql
+--   \i 03_retail_distribuidoras.sql
+--   \i 04_proveedores_fabricas.sql
+--
+-- Opción C — Script bash (desde raíz del proyecto):
+--   for f in db/0{1,2,3,4}_*.sql; do
+--     psql -U postgres -d nike_logistica_db -f "$f"
+--   done
+--
+-- ============================================================
+-- ARQUITECTURA DE SCHEMAS (todos en el mismo PostgreSQL)
+-- ============================================================
+--
+--  nike_logistica      ← DB CENTRAL (Plataforma SaaS multi-tenant)
+--  │  Tablas: 24 (depuradas — todas justificadas por el backend)
+--  │  Script: db/01_platform_central.sql
+--  │
+--  │  Módulos:
+--  │   [1] Plataforma:  organizations, users, roles, user_roles,
+--  │                    workspaces, conversations, messages,
+--  │                    artifacts, semantic_mappings, audit_logs
+--  │   [2] Productos:   categories, products, product_reviews,
+--  │                    product_embeddings (pgvector vector(384))
+--  │   [3] Inventario:  warehouses (lat/lng GPS), inventory,
+--  │                    inventory_movements, transfer_orders
+--  │   [4] Suministro:  suppliers, purchase_orders,
+--  │                    purchase_order_items
+--  │   [5] Ventas:      customers, sales_orders, sales_order_items,
+--  │                    routes, shipments
+--  │   [6] Agentes IA:  agent_sessions (WebSocket state)
+--  │
+--  nike_sede_peru      ← DB SEDE OPERATIVA (Nike Perú Logística)
+--  │  Script: db/02_sede_nike_peru.sql
+--  │  Contiene: 5 almacenes GPS, 20 productos, inventario completo,
+--  │  8 órdenes compra, 5 ventas, 10 rutas nacionales, 5 envíos
+--  │
+--  nike_retail         ← DB DISTRIBUIDORAS / RETAIL
+--  │  Script: db/03_retail_distribuidoras.sql
+--  │  Contiene: 7 retailers, 5 regiones, 6 categorías,
+--  │  ~110 registros reales del Nike Dataset.csv (2020-2021)
+--  │
+--  nike_supply_chain   ← DB CADENA DE SUMINISTRO GLOBAL
+--     Script: db/04_proveedores_fabricas.sql
+--     Contiene: 21 grupos proveedores, 50 fábricas reales del
+--     imap_export.csv (Vietnam, India, Indonesia, China, USA...)
+--
+-- ============================================================
+-- PREREQUISITOS
+-- ============================================================
+--
+-- 1. PostgreSQL 14+ instalado
+-- 2. Extensión pgvector instalada:
+--    $ sudo apt install postgresql-14-pgvector
+--    O desde source: https://github.com/pgvector/pgvector
+--
+-- 3. Crear la base de datos:
+--    CREATE DATABASE nike_logistica_db;
+--
+-- 4. Conectar y ejecutar los scripts en orden:
+--    psql -U postgres -d nike_logistica_db
+--
+-- ============================================================
+-- NOTAS PARA EL BACKEND (FastAPI)
+-- ============================================================
+--
+-- DEMO_MODE=True → usar cabecera X-Demo-Role: Admin|Supervisor|Operador
+-- Usuarios demo ya creados (password hasheado con pgcrypto bcrypt):
+--   admin@nike.pe     → admin123  (rol: Administrador)
+--   supervisor@nike.pe → super123 (rol: Supervisor)
+--   operador@nike.pe  → oper123  (rol: Logística)
+--
+-- pgvector: Los vectores en product_embeddings.description_vector
+-- están en NULL. El script app/core/seed.py los popula al iniciar
+-- la app con SentenceTransformers (all-MiniLM-L6-v2, 384 dims).
+-- Después crear el índice:
+--   CREATE INDEX idx_embeddings_vector ON nike_logistica.product_embeddings
+--       USING ivfflat (description_vector vector_cosine_ops) WITH (lists = 100);
+--
+-- Semantic Cache Redis: Las consultas se cachean por embedding del query.
+-- El sistema compara similitud coseno > 0.95 antes de llamar a Groq.
+--
+-- ============================================================
+-- DESCRIPCIÓN DE FUENTES DE DATOS (CSVs del dataset/)
+-- ============================================================
+--
+-- dataset/Incluye ventas de zapatillas, reseñas y puntuaciones..csv
+--   → products + product_reviews (ratings, descripciones reales)
+--
+-- dataset/Nike Dataset.csv
+-- dataset/registros de ventas con fechas, regiones y precios.csv
+--   → nike_retail.retail_sales (ventas por retailer/región/canal)
+--
+-- dataset/imap_export.csv
+--   → nike_supply_chain.factories (50 fábricas globales reales)
+--
+-- dataset/Dataset de ventas (sin limpiar).csv
+--   → referencias de productos adicionales (SuperRep Go, Blazer Mid,
+--     React Infinity, Tiempo Legend, Air Jordan, Mercurial, etc.)
+--
+-- dataset/Human Resources.csv
+--   → No se usa en DB SQL. Disponible para análisis ad-hoc del chatbot
+--     vía pandas/CSV reader en el backend si se requiere.
+--
+-- ============================================================
+
+-- Este archivo NO ejecuta SQL directamente.
+-- Ejecutar los 4 scripts listados arriba en el orden indicado.

@@ -34,19 +34,19 @@
     "realm": [
       {
         "name": "admin",
-        "description": "Administrador de la plataforma",
+        "description": "Administrador de la plataforma — acceso total",
         "composite": false,
         "clientRole": false
       },
       {
-        "name": "developer",
-        "description": "Desarrollador con acceso a Git y herramientas",
+        "name": "supervisor",
+        "description": "Supervisor — inventario, tracking, auditoría",
         "composite": false,
         "clientRole": false
       },
       {
-        "name": "viewer",
-        "description": "Solo lectura en dashboards y portal",
+        "name": "operador",
+        "description": "Operador — consulta y chatbot",
         "composite": false,
         "clientRole": false
       }
@@ -54,31 +54,65 @@
   },
   "groups": [
     {
-      "name": "engineering",
-      "path": "/engineering",
-      "realmRoles": ["developer"]
-    },
-    {
       "name": "operations",
       "path": "/operations",
       "realmRoles": ["admin"]
+    },
+    {
+      "name": "logistics",
+      "path": "/logistics",
+      "realmRoles": ["supervisor"]
     }
   ],
   "users": [
     {
-      "username": "nikeadmin",
+      "username": "admin",
       "enabled": true,
       "emailVerified": true,
-      "firstName": "Nike",
-      "lastName": "Admin",
+      "firstName": "Admin",
+      "lastName": "Nike",
       "email": "admin@nike.com",
       "realmRoles": ["admin"],
       "groups": ["/operations"],
       "credentials": [
         {
           "type": "password",
-          "value": "NikeAdmin2026!",
-          "temporary": true
+          "value": "admin123",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "supervisor",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Supervisor",
+      "lastName": "Nike",
+      "email": "supervisor@nike.com",
+      "realmRoles": ["supervisor"],
+      "groups": ["/logistics"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "supervisor123",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "operador",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Operador",
+      "lastName": "Nike",
+      "email": "operador@nike.com",
+      "realmRoles": ["operador"],
+      "groups": ["/logistics"],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "operador123",
+          "temporary": false
         }
       ]
     }
@@ -217,28 +251,30 @@
       ]
     },
     {
-      "clientId": "intranet",
-      "name": "Intranet",
-      "description": "Nike Corporate Intranet — OAuth2/OIDC",
+      "clientId": "nike-backend",
+      "name": "Nike Backend",
+      "description": "FastAPI Backend — OAuth2/OIDC confidential client (frontend + backend use same client)",
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
-      "secret": "intranet-client-secret-change-me-2026",
+      "secret": "nike-backend-secret-change-me",
       "redirectUris": [
         "http://intranet.nike.com/*",
-        "http://intranet.nike.com/oauth2/callback"
+        "http://intranet.nike.com/auth/callback",
+        "http://localhost:5173/*",
+        "http://localhost:5173/auth/callback"
       ],
       "webOrigins": [
-        "http://intranet.nike.com"
+        "http://intranet.nike.com",
+        "http://localhost:5173"
       ],
       "protocol": "openid-connect",
       "publicClient": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
-      "serviceAccountsEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
       "fullScopeAllowed": true,
       "defaultClientScopes": [
-        "web-origins",
         "profile",
         "roles",
         "email",

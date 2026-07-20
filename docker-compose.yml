@@ -4,6 +4,8 @@
 # Ubuntu Server 24.04 LTS | Intel i5-10400F | 16 GB RAM
 # Todas las imágenes con versión fija. Sin :latest.
 # =============================================================================
+# Servicios: 19 (11 infraestructura + 8 plataforma logística)
+# =============================================================================
 
 networks:
   frontend:
@@ -21,8 +23,12 @@ networks:
   vpn:
     name: nike_vpn
     driver: bridge
+  nike_logistica:
+    name: nike_logistica_network
+    driver: bridge
 
 volumes:
+  # Infraestructura
   postgres_data:
     name: nike_postgres_data
   keycloak_data:
@@ -43,14 +49,28 @@ volumes:
     name: nike_wireguard_data
   traefik_certs:
     name: nike_traefik_certs
+  # Plataforma logística
+  postgres_central_data:
+    name: nike_postgres_central
+  postgres_sede_data:
+    name: nike_postgres_sede_peru
+  postgres_retail_data:
+    name: nike_postgres_retail
+  postgres_supply_data:
+    name: nike_postgres_supply_chain
+  redis_data:
+    name: nike_redis_data
+  pgadmin_data:
+    name: nike_pgadmin_data
 
 services:
   # ===========================================================================
+  # INFRAESTRUCTURA CORPORATIVA
+  # ===========================================================================
+
+  # ---------------------------------------------------------------------------
   # TRAEFIK — Reverse Proxy
-  # ===========================================================================
-  # Decisión: Entrypoint único para todo el tráfico HTTP/HTTPS.
-  # Centraliza routing, simplifica firewall, prepara TLS futuro.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   traefik:
     image: traefik:${TRAEFIK_VERSION}
     container_name: nike-traefik
@@ -78,7 +98,6 @@ services:
         reservations:
           memory: 64M
     labels:
-      # Dashboard interno de Traefik
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${DOMAIN_SUFFIX}`)"
       - "traefik.http.routers.traefik-dashboard.entrypoints=web"
@@ -95,12 +114,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   # ADGUARD HOME — DNS Interno + Bloqueo de Ads
-  # ===========================================================================
-  # Decisión: Resuelve *.lab localmente. Bloquea ads. Cachea DNS.
-  # Upstream externo para cuando haya internet.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   adguard:
     image: adguard/adguardhome:${ADGUARD_VERSION}
     container_name: nike-adguard
@@ -108,7 +124,7 @@ services:
     ports:
       - "53:53/tcp"
       - "53:53/udp"
-      - "3053:3000/tcp"       # Web UI en puerto 3053 del host (evitar conflicto)
+      - "3053:3000/tcp"
     volumes:
       - adguard_work:/opt/adguardhome/work
       - ./adguard/conf:/opt/adguardhome/conf
@@ -139,12 +155,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # ===========================================================================
-  # POSTGRESQL — Base de Datos
-  # ===========================================================================
-  # Decisión: Una sola instancia con múltiples DBs (keycloak, gitea, grafana).
-  # Reduce uso de RAM vs 3 instancias separadas.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
+  # POSTGRESQL — Base de Datos Infraestructura (keycloak, gitea, grafana)
+  # ---------------------------------------------------------------------------
   postgres:
     image: postgres:${POSTGRES_VERSION}
     container_name: nike-postgres
@@ -178,12 +191,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   # KEYCLOAK — Identity Provider (OIDC / OAuth2)
-  # ===========================================================================
-  # Decisión: Modo producción con proxy-headers=xforwarded (detrás de Traefik).
-  # HTTP entre Traefik↔Keycloak; TLS termina en Traefik cuando se habilite.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   keycloak:
     image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
     container_name: nike-keycloak
@@ -243,12 +253,9 @@ services:
         max-size: "10m"
         max-file: "5"
 
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   # GITEA — Repositorio Git
-  # ===========================================================================
-  # Decisión: Integrado con Keycloak vía OAuth2. PostgreSQL como backend.
-  # SSH en puerto 2222 para no colisionar con el SSH del host.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   gitea:
     image: gitea/gitea:${GITEA_VERSION}
     container_name: nike-gitea
@@ -309,17 +316,13 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   # PORTAINER CE — Gestión Docker
-  # ===========================================================================
-  # Decisión: UI web para gestión visual de contenedores.
-  # Accede al socket Docker como read/write para control total.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   portainer:
     image: portainer/portainer-ce:${PORTAINER_VERSION}
     container_name: nike-portainer
     restart: unless-stopped
-    # Contraseña se configura en el primer acceso vía web UI
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
@@ -350,12 +353,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   # PROMETHEUS — Métricas
-  # ===========================================================================
-  # Decisión: Recolecta métricas de todos los servicios instrumentados.
-  # Retención: 15 días o 5GB (lo que ocurra primero).
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   prometheus:
     image: prom/prometheus:${PROMETHEUS_VERSION}
     container_name: nike-prometheus
@@ -400,12 +400,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   # GRAFANA — Dashboards
-  # ===========================================================================
-  # Decisión: Auto-provisioning de datasources y dashboards.
-  # PostgreSQL como backend para persistencia de configuración.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   grafana:
     image: grafana/grafana:${GRAFANA_VERSION}
     container_name: nike-grafana
@@ -462,12 +459,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   # NODE EXPORTER — Métricas del Host
-  # ===========================================================================
-  # Decisión: Corre con acceso al filesystem del host (read-only).
-  # pid=host para métricas de procesos precisas.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   node-exporter:
     image: prom/node-exporter:${NODE_EXPORTER_VERSION}
     container_name: nike-node-exporter
@@ -503,12 +497,9 @@ services:
         max-size: "5m"
         max-file: "2"
 
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   # WIREGUARD (wg-easy) — VPN
-  # ===========================================================================
-  # Decisión: wg-easy incluye UI web para gestión de peers sin CLI.
-  # Requiere NET_ADMIN y SYS_MODULE para crear interfaces de red.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   wireguard:
     image: ghcr.io/wg-easy/wg-easy:${WGEASY_VERSION}
     container_name: nike-wireguard
@@ -560,107 +551,9 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  # ===========================================================================
-  # INTRANET — Aplicación Interna (protegida)
-  # ===========================================================================
-  # Decisión: Nginx estático con página de intranet corporativa.
-  # Protegida por Keycloak SSO mediante OAuth2 Proxy.
-  # ===========================================================================
-  intranet:
-    image: nginx:${NGINX_VERSION}
-    container_name: nike-intranet
-    restart: unless-stopped
-    volumes:
-      - ./intranet/html:/usr/share/nginx/html:ro
-    networks:
-      - frontend
-    deploy:
-      resources:
-        limits:
-          memory: 64M
-          cpus: "0.10"
-        reservations:
-          memory: 16M
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:80"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 5s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "5m"
-        max-file: "2"
-
-  # ===========================================================================
-  # OAUTH2 PROXY — Gatekeeper SSO para Intranet
-  # ===========================================================================
-  # Decisión: Intercepta tráfico a intranet y redirige a Keycloak si no hay auth.
-  # ===========================================================================
-  oauth2-proxy:
-    image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0-alpine
-    container_name: nike-oauth2-proxy
-    restart: unless-stopped
-    environment:
-      OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:4180
-      OAUTH2_PROXY_PROVIDER: oidc
-      OAUTH2_PROXY_CLIENT_ID: intranet
-      OAUTH2_PROXY_CLIENT_SECRET: ${INTRANET_CLIENT_SECRET}
-      OAUTH2_PROXY_COOKIE_SECRET: ${INTRANET_COOKIE_SECRET}
-      OAUTH2_PROXY_SKIP_OIDC_DISCOVERY: "true"
-      OAUTH2_PROXY_COOKIE_SECURE: "false"
-      OAUTH2_PROXY_OIDC_ISSUER_URL: http://keycloak:8080/realms/nike
-      OAUTH2_PROXY_LOGIN_URL: http://auth.${DOMAIN_SUFFIX}/realms/nike/protocol/openid-connect/auth
-      OAUTH2_PROXY_REDEEM_URL: http://keycloak:8080/realms/nike/protocol/openid-connect/token
-      OAUTH2_PROXY_OIDC_JWKS_URL: http://keycloak:8080/realms/nike/protocol/openid-connect/certs
-      OAUTH2_PROXY_REDIRECT_URL: http://intranet.${DOMAIN_SUFFIX}/oauth2/callback
-      OAUTH2_PROXY_COOKIE_DOMAINS: .${DOMAIN_SUFFIX}
-      OAUTH2_PROXY_UPSTREAMS: http://intranet:80
-      OAUTH2_PROXY_EMAIL_DOMAINS: "*"
-      OAUTH2_PROXY_INSECURE_OIDC_SKIP_ISSUER_VERIFICATION: "true"
-      OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true"
-      TZ: ${TIMEZONE}
-    networks:
-      - frontend
-      - backend
-    depends_on:
-      keycloak:
-        condition: service_healthy
-      intranet:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-          cpus: "0.25"
-        reservations:
-          memory: 32M
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.intranet.rule=Host(`intranet.${DOMAIN_SUFFIX}`)"
-      - "traefik.http.routers.intranet.entrypoints=web"
-      - "traefik.http.services.intranet.loadbalancer.server.port=4180"
-      - "traefik.docker.network=nike_frontend"
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:4180/ping"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 15s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   # PORTAL — Aplicación Pública
-  # ===========================================================================
-  # Decisión: Nginx estático con portal público de ejemplo.
-  # Accesible sin autenticación.
-  # ===========================================================================
+  # ---------------------------------------------------------------------------
   portal:
     image: nginx:${NGINX_VERSION}
     container_name: nike-portal
@@ -693,3 +586,349 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
+
+  # ===========================================================================
+  # PLATAFORMA LOGÍSTICA — Bases de Datos
+  # ===========================================================================
+
+  # ---------------------------------------------------------------------------
+  # DB 1 — CENTRAL (pgvector)
+  # ---------------------------------------------------------------------------
+  postgres_central:
+    image: pgvector/pgvector:${PGVECTOR_VERSION}
+    container_name: nike_db_central
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${DB_CENTRAL_USER}
+      POSTGRES_PASSWORD: ${DB_CENTRAL_PASSWORD}
+      POSTGRES_DB:       ${DB_CENTRAL_NAME}
+    volumes:
+      - postgres_central_data:/var/lib/postgresql/data
+      - ./db/01_platform_central.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    networks:
+      - nike_logistica
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: "0.50"
+        reservations:
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_CENTRAL_USER} -d ${DB_CENTRAL_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # DB 2 — SEDE PERU
+  # ---------------------------------------------------------------------------
+  postgres_sede_peru:
+    image: postgres:16-alpine
+    container_name: nike_db_sede_peru
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${DB_SEDE_USER}
+      POSTGRES_PASSWORD: ${DB_SEDE_PASSWORD}
+      POSTGRES_DB:       ${DB_SEDE_NAME}
+    volumes:
+      - postgres_sede_data:/var/lib/postgresql/data
+      - ./db/02_sede_nike_peru.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    networks:
+      - nike_logistica
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.25"
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_SEDE_USER} -d ${DB_SEDE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # DB 3 — RETAIL
+  # ---------------------------------------------------------------------------
+  postgres_retail:
+    image: postgres:16-alpine
+    container_name: nike_db_retail
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${DB_RETAIL_USER}
+      POSTGRES_PASSWORD: ${DB_RETAIL_PASSWORD}
+      POSTGRES_DB:       ${DB_RETAIL_NAME}
+    volumes:
+      - postgres_retail_data:/var/lib/postgresql/data
+      - ./db/03_retail_distribuidoras.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    networks:
+      - nike_logistica
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.25"
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_RETAIL_USER} -d ${DB_RETAIL_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # DB 4 — SUPPLY CHAIN
+  # ---------------------------------------------------------------------------
+  postgres_supply_chain:
+    image: postgres:16-alpine
+    container_name: nike_db_supply_chain
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${DB_SUPPLY_USER}
+      POSTGRES_PASSWORD: ${DB_SUPPLY_PASSWORD}
+      POSTGRES_DB:       ${DB_SUPPLY_NAME}
+    volumes:
+      - postgres_supply_data:/var/lib/postgresql/data
+      - ./db/04_proveedores_fabricas.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    networks:
+      - nike_logistica
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.25"
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_SUPPLY_USER} -d ${DB_SUPPLY_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # REDIS — Caché Semántica
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:${REDIS_ALPINE_VERSION}
+    container_name: nike_redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1
+      --loglevel warning
+    volumes:
+      - redis_data:/data
+    networks:
+      - nike_logistica
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
+        reservations:
+          memory: 64M
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ===========================================================================
+  # PLATAFORMA LOGÍSTICA — Aplicaciones
+  # ===========================================================================
+
+  # ---------------------------------------------------------------------------
+  # BACKEND — API FastAPI
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+    container_name: nike-backend
+    restart: unless-stopped
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_PORT=8000
+      - APP_HOST=0.0.0.0
+      - SECRET_KEY=${SECRET_KEY}
+      - DEMO_MODE=${DEMO_MODE}
+      - DEMO_ROLE_HEADER=${DEMO_ROLE_HEADER:-X-Demo-Role}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - DATABASE_URL_CENTRAL=postgresql+asyncpg://${DB_CENTRAL_USER}:${DB_CENTRAL_PASSWORD}@postgres_central:5432/${DB_CENTRAL_NAME}
+      - DATABASE_URL_SEDE=postgresql+asyncpg://${DB_SEDE_USER}:${DB_SEDE_PASSWORD}@postgres_sede_peru:5432/${DB_SEDE_NAME}
+      - DATABASE_URL_RETAIL=postgresql+asyncpg://${DB_RETAIL_USER}:${DB_RETAIL_PASSWORD}@postgres_retail:5432/${DB_RETAIL_NAME}
+      - DATABASE_URL_SUPPLY=postgresql+asyncpg://${DB_SUPPLY_USER}:${DB_SUPPLY_PASSWORD}@postgres_supply_chain:5432/${DB_SUPPLY_NAME}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - KEYCLOAK_ENABLED=${KEYCLOAK_ENABLED}
+      - KEYCLOAK_URL=${KEYCLOAK_URL}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GROQ_MODEL=${GROQ_MODEL}
+      - GROQ_MAX_TOKENS=${GROQ_MAX_TOKENS:-2048}
+      - GROQ_TEMPERATURE=${GROQ_TEMPERATURE:-0.3}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-all-MiniLM-L6-v2}
+      - EMBEDDING_DIMENSIONS=${EMBEDDING_DIMENSIONS:-384}
+      - VECTOR_SIMILARITY_THRESHOLD=${VECTOR_SIMILARITY_THRESHOLD:-0.95}
+    volumes:
+      - ./backend/app:/workspace/app
+    depends_on:
+      postgres_central:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - nike_logistica
+      - frontend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend-api.rule=Host(`api.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.backend-api.entrypoints=web"
+      - "traefik.http.services.backend-api.loadbalancer.server.port=8000"
+      - "traefik.docker.network=nike_frontend"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: "1.00"
+        reservations:
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # FRONTEND — React + Vite (reemplaza intranet)
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+    container_name: nike-intranet
+    restart: unless-stopped
+    environment:
+      - VITE_API_BASE_URL=http://intranet.${DOMAIN_SUFFIX}/api/v1
+      - VITE_PROXY_TARGET=http://backend:8000
+      - VITE_KEYCLOAK_ENABLED=${VITE_KEYCLOAK_ENABLED}
+      - VITE_KEYCLOAK_URL=http://auth.${DOMAIN_SUFFIX}
+      - VITE_KEYCLOAK_REALM=${VITE_KEYCLOAK_REALM}
+      - VITE_KEYCLOAK_CLIENT_ID=${VITE_KEYCLOAK_CLIENT_ID}
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+    networks:
+      - frontend
+      - nike_logistica
+    depends_on:
+      - backend
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.intranet.rule=Host(`intranet.${DOMAIN_SUFFIX}`)"
+      - "traefik.http.routers.intranet.entrypoints=web"
+      - "traefik.http.services.intranet.loadbalancer.server.port=5173"
+      - "traefik.docker.network=nike_frontend"
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.50"
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:5173"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ---------------------------------------------------------------------------
+  # PGADMIN — Panel Visual (OPCIONAL, --profile tools)
+  # ---------------------------------------------------------------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: nike_pgadmin
+    restart: unless-stopped
+    profiles:
+      - tools
+    environment:
+      PGADMIN_DEFAULT_EMAIL:              ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD:           ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE:         "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      postgres_central:
+        condition: service_healthy
+      postgres_sede_peru:
+        condition: service_healthy
+      postgres_retail:
+        condition: service_healthy
+      postgres_supply_chain:
+        condition: service_healthy
+    networks:
+      - nike_logistica
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.25"
+        reservations:
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
