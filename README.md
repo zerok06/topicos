@@ -370,3 +370,11 @@ AdGuard Home Pass: oPTdwAbrzW3maWX
 WireGuard VPN Pass: Ksyi1LwSEvntIccR
 Gitea User: gitadmin
 Gitea Pass: 3h4DdHIrG4Wd8fyY
+
+IP del Servidor: 192.168.2.102
+PostgreSQL: nikeadmin / 8MwpWH3AiquV0VKlTiOmg
+Keycloak Admin: admin / 09O9DkWD0wyoCKNXIj5NKw
+Grafana Admin: admin / 4b9VhJoJ3NnPlLaMrJRfYw
+Portainer Admin: admin / NkB5DnsB5LAe19Xzv96g
+AdGuard Home: admin / p1gpOvjgTxXnnSIv
+WireGuard VPN: admin / bzGfrdOdnHVExoV

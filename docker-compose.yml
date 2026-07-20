@@ -175,7 +175,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1536M
+          memory: 2048M
           cpus: "1.00"
         reservations:
           memory: 512M
@@ -202,7 +202,6 @@ services:
       - start
       - --http-enabled=true
       - --hostname-strict=true
-      - --hostname-backchannel-dynamic=true
       - --proxy-headers=xforwarded
       - --import-realm
     environment:
@@ -231,7 +230,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1536M
+          memory: 2048M
           cpus: "1.00"
         reservations:
           memory: 512M
@@ -294,7 +293,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
           cpus: "0.50"
         reservations:
           memory: 128M
@@ -378,7 +377,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
           cpus: "0.50"
         reservations:
           memory: 128M
@@ -437,7 +436,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
           cpus: "0.50"
         reservations:
           memory: 128M
@@ -565,10 +564,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 64M
+          memory: 128M
           cpus: "0.10"
         reservations:
-          memory: 16M
+          memory: 32M
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portal.rule=Host(`portal.${DOMAIN_SUFFIX}`)"
@@ -610,7 +609,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1024M
+          memory: 1536M
           cpus: "0.50"
         reservations:
           memory: 256M
@@ -645,7 +644,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
           cpus: "0.25"
         reservations:
           memory: 128M
@@ -680,7 +679,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
           cpus: "0.25"
         reservations:
           memory: 128M
@@ -715,7 +714,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 768M
           cpus: "0.25"
         reservations:
           memory: 128M
@@ -752,10 +751,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 512M
           cpus: "0.25"
         reservations:
-          memory: 64M
+          memory: 128M
     healthcheck:
       test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
@@ -825,10 +824,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1024M
+          memory: 1536M
           cpus: "1.00"
         reservations:
-          memory: 256M
+          memory: 512M
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8000/api/v1/health"]
       interval: 30s
@@ -875,7 +874,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          memory: 512M
           cpus: "0.50"
         reservations:
           memory: 128M
